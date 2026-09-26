@@ -1,5 +1,14 @@
 # Portfolio snapshot validation
 
+## Presentation update — 26 September 2026
+
+- Added a locally rendered SVG masthead and fresh Job Compass and Build Lab screenshots; inspected all three visually.
+- Job Compass used an isolated temporary database with three fictional jobs, automation disabled and Gmail disconnected. The existing personal service was untouched.
+- Both screenshot sessions reported no JavaScript page errors. Build Lab's static preview returned a missing favicon; its application assets loaded successfully.
+- Checked landing-page and project README relative links, SVG XML and the presentation diff. Application source was not changed; the earlier test results below were not rerun for documentation edits.
+
+## Source snapshot checks
+
 Checked on 25-26 September 2026 while assembling this new repository:
 
 - Build Lab: clean dependency installation, production build and all 52 Node.js calculation tests passed. The build reports a bundle-size warning. Browser tests were not rerun for this packaging change.

@@ -1,9 +1,63 @@
-# Miguel Rocha — Selected Projects
+![Miguel Rocha — Selected projects in web development, Python, browser extensions and Blender](assets/portfolio-header.svg)
 
-Practical projects in web development, Python, browser extensions and Blender vehicle modding.
-Based in Lisbon, Portugal. Interested in junior developer roles and technology internships in Lisbon or remotely.
+# Building tools for everyday problems
 
-## Featured work
+I'm **Miguel Rocha**, based in Lisbon. My projects span web applications, Python services, browser extensions and Blender vehicle modding. I'm looking for **junior developer roles and technology internships in Lisbon or remotely**.
+
+[Start here](#start-here) · [All projects](#all-projects) · [Skills in practice](#skills-in-practice) · [Validation](docs/VALIDATION.md)
+
+## Start here
+
+### 01 / Job Compass
+**A job search workspace built around review and control.**
+
+Searching across multiple sites makes it easy to lose track of opportunities and replies. Job Compass brings discovery, shortlisting, application preparation and Gmail reply tracking into one local workspace. A Brave companion transfers reviewed details to supported application forms.
+
+`Python` `FastAPI` `SQLite` `OAuth` `JavaScript` `Manifest V3`
+
+![Job Compass dashboard showing fictional opportunities in an isolated demo workspace](assets/job-compass.png)
+
+*Actual application UI with fictional sample jobs. No mailbox data or personal applications are shown.*
+
+- **Engineering focus:** source adapters, duplicate detection, persistent workflow state and encrypted credential storage.
+- **Review controls:** edits invalidate approvals; the companion leaves the employer tab open for manual review and submission.
+- **Evidence:** 38 automated tests passed during portfolio assembly. Active development; automatic submission is not implemented.
+
+[Explore Job Compass →](projects/job-compass/)
+
+---
+
+### 02 / Build Lab
+**Plan an NBA 2K27 build without losing track of linked decisions.**
+
+Changing one attribute can affect the rest of a player build. Build Lab combines a React interface with separate calculation modules, attribute locks, undo, saved builds and comparisons.
+
+`React` `JavaScript` `Vite` `State management` `Node.js tests`
+
+![Build Lab player-build planning interface](assets/build-lab-dashboard.png)
+
+- **Engineering focus:** linked changes, atomic undo, persistent builds and a testable calculation layer.
+- **Evidence:** 52 calculation tests passed and the production build succeeds.
+- **Scope:** an independent fan project using externally sourced rules, data and calculation inputs. See its source notes for accuracy limitations and attribution.
+
+[Explore Build Lab →](projects/build-lab/)
+
+---
+
+### 03 / BMW M4 ADRO Kit
+**A collaborative vehicle mod, from Blender work to a published release.**
+
+Blender was the main tool used for the modelling work on this Forza Horizon 6 mod. The release includes **widebody and standard-body variants**, custom exterior parts, interior styling and in-game colour options.
+
+`Blender` `3D modelling` `Vehicle modding` `Release preparation`
+
+[Read the case study →](projects/bmw-m4-adro/) · [Published mod on Nexus Mods ↗](https://www.nexusmods.com/forzahorizon6/mods/469)
+
+This is collaborative work, not a claim of sole authorship. Downloads are available on Nexus Mods; large game archives are not stored here.
+
+## All projects
+
+Explore the full collection, including the four selected browser extensions.
 
 | Project | What it does | Main skills |
 | --- | --- | --- |
@@ -16,7 +70,15 @@ Based in Lisbon, Portugal. Interested in junior developer roles and technology i
 | [Travian Night Mode](extensions/night-mode/) | Persistent dark theme for dynamically changing pages | CSS, MutationObserver, preference synchronisation |
 | [BMW M4 ADRO Kit](projects/bmw-m4-adro/) | Published Forza Horizon 6 vehicle mod with two body variants | Blender, 3D modelling, game modding |
 
-![Build Lab interface](assets/build-lab.png)
+## Skills in practice
+
+| Area | Examples in this portfolio |
+| :--- | :--- |
+| **Frontend development** | React, JavaScript, responsive HTML/CSS, browser storage |
+| **Backend & integration** | Python, FastAPI, SQLite, OAuth, external APIs |
+| **Browser tooling** | Manifest V3, content scripts, service workers, DOM integration |
+| **Testing & workflow** | Git, calculation tests, API tests, documented setup and limitations |
+| **3D work** | Blender modelling, vehicle modifications and release packaging |
 
 ## Explore the repository
 

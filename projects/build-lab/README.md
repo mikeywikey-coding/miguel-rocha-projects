@@ -1,10 +1,12 @@
+[Back to the portfolio](../../README.md)
+
 # Build Lab
 
 A React planner for NBA 2K27 player builds, with linked attribute changes, saved-build comparisons and an undoable editing workflow.
 
 **Stack:** React, JavaScript, Vite, Playwright, Node.js tests.
 
-![Build Lab](../../assets/build-lab.png)
+![Build Lab player-build planning interface](../../assets/build-lab-dashboard.png)
 
 ## Features
 

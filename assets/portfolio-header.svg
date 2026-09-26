@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+<title id="title">Miguel Rocha — Selected projects</title><desc id="desc">Web development, Python, browser extensions and Blender. Lisbon, Portugal.</desc>
+<rect width="1280" height="360" rx="20" fill="#101e2d"/>
+<path d="M860 0V360M980 0V360M1100 0V360M1220 0V360M820 60H1280M820 180H1280M820 300H1280" stroke="#233548" fill="none"/>
+<circle cx="1100" cy="180" r="104" fill="none" stroke="#304c5e" stroke-width="2"/>
+<circle cx="1100" cy="180" r="68" fill="none" stroke="#304c5e" stroke-width="2"/>
+<path d="M1038 237L1162 113M1077 113H1162V198" fill="none" stroke="#64dec6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="58" y="55" width="34" height="4" rx="2" fill="#64dec6"/>
+<text x="108" y="63" font-family="Arial,sans-serif" font-size="16" letter-spacing="3" fill="#a9c2ce">SELECTED PROJECTS / 2026</text>
+<text x="56" y="154" font-family="Arial,sans-serif" font-size="66" font-weight="700" letter-spacing="-2" fill="#f3f7fa">Miguel Rocha</text>
+<text x="59" y="207" font-family="Arial,sans-serif" font-size="25" fill="#bfd0db">Useful tools. Thoughtful interfaces.</text>
+<text x="59" y="246" font-family="Arial,sans-serif" font-size="22" fill="#bfd0db">From browser workflows to Blender.</text>
+<text x="59" y="311" font-family="Arial,sans-serif" font-size="16" letter-spacing="1" fill="#64dec6">LISBON, PORTUGAL / JUNIOR DEVELOPMENT &amp; INTERNSHIPS</text>
+</svg>
