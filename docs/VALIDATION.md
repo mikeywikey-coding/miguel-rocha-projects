@@ -1,5 +1,16 @@
 # Portfolio snapshot validation
 
+## Recruiter review cleanup — 26 September 2026
+
+- Inspected the tracked folder inventory across all eight projects. Added a reviewer guide explaining entry points, nested folders, generated files and third-party inputs.
+- Checked all tracked Markdown links, all 77 JavaScript/MJS files with Node syntax checks, Python parsing, static relative JavaScript imports (including Vite extension resolution), and the five extension manifests' local scripts, styles, icons, popups, options pages and web-accessible resources. No unresolved references were found by these checks.
+- Formatted six Python modules with Black 26.3.1 and six selected JavaScript modules with Prettier 3.6.2. Python AST and Babel AST comparisons confirmed unchanged parsed logic; original quoted property keys were preserved. Third-party research code and Travian extension JavaScript were not modified.
+- Job Compass: 38 pytest tests passed, plus the isolated Brave companion and application-workflow smoke checks. No real employer submissions or personal mailbox access occurred.
+- Build Lab: 52 calculation tests passed and the production build succeeded. The existing large-bundle warning remains. Job Compass's two dependency deprecation warnings remain.
+- Workout Tracker and the Travian extensions were checked structurally and syntactically; this pass does not certify their complete live behavior.
+
+This is a readability and packaging pass, not a comprehensive bug or security audit. The formatting expands compact source substantially in the diff but changes no runtime logic.
+
 ## Presentation update — 26 September 2026
 
 - Added a locally rendered SVG masthead and fresh Job Compass and Build Lab screenshots; inspected all three visually.

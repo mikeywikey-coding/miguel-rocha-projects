@@ -4,7 +4,7 @@
 
 I'm **Miguel Rocha**, based in Lisbon. My projects span web applications, Python services, browser extensions and Blender vehicle modding. I'm looking for **junior developer roles and technology internships in Lisbon or remotely**.
 
-[Start here](#start-here) · [All projects](#all-projects) · [Skills in practice](#skills-in-practice) · [Validation](docs/VALIDATION.md)
+[Start here](#start-here) · [All projects](#all-projects) · [Reviewer guide](docs/REVIEWER-GUIDE.md) · [Validation](docs/VALIDATION.md)
 
 ## Start here
 
