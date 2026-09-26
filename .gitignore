@@ -1,0 +1,25 @@
+node_modules/
+dist/
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+.netlify/
+.openai/
+.claude/
+.codex/
+.vscode/
+test-results/
+playwright-report/
+*.log
+*.zip
+*.7z
+*.blend
+*.blend1
+.DS_Store
+Thumbs.db
+
+# Private Job Compass runtime state
+projects/job-compass/data/

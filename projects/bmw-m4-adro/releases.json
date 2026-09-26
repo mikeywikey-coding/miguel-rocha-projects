@@ -1,0 +1,15 @@
+{
+  "download_url": "https://www.nexusmods.com/forzahorizon6/mods/469",
+  "local_release_inventory": [
+    {
+      "file": "non widebody.zip",
+      "bytes": 33383669,
+      "sha256": "a77849513caa8f25f316feb3bf73f12901ebb55178e41fa925749fbdab038671"
+    },
+    {
+      "file": "widebody.zip",
+      "bytes": 32660228,
+      "sha256": "40201b564e84ea708982a2c3519e8893e5561efc1201b3020dd5a07822bb2b9c"
+    }
+  ]
+}

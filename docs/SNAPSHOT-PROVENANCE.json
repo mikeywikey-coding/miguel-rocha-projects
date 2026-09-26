@@ -1,0 +1,17 @@
+{
+  "assembled": "2026-09-25",
+  "snapshots": [
+    {
+      "source": "miguel-rocha-portfolio",
+      "commit": "92b93b72082afb28efab73b8295f628e6f0e9052",
+      "destination": ".",
+      "files": 506
+    },
+    {
+      "source": "job-compass",
+      "commit": "47c5acc26a7718dd3c3211c3453756a42bf1d68d",
+      "destination": "projects/job-compass",
+      "files": 37
+    }
+  ]
+}
