@@ -21,7 +21,7 @@ Searching across multiple sites makes it easy to lose track of opportunities and
 
 - **Engineering focus:** source adapters, duplicate detection, persistent workflow state and encrypted credential storage.
 - **Review controls:** edits invalidate approvals; the companion leaves the employer tab open for manual review and submission.
-- **Evidence:** 38 automated tests passed during portfolio assembly. Active development; automatic submission is not implemented.
+- **Evidence:** 59 Python tests and 15 browser queue/discovery tests passed on 28 September 2026. Active development; automatic submission is not implemented.
 
 [Explore Job Compass →](projects/job-compass/)
 

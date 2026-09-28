@@ -24,6 +24,31 @@ def test_cannot_mark_unreviewed_job_applied(client):
     ident=make_job(client)
     assert client.post(f'/api/jobs/{ident}/status',json={'status':'applied','confirm':True}).status_code==409
 
+def test_companion_submission_requires_confirmation_and_current_revision(client):
+    ident=make_job(client)
+    draft=client.post(f'/api/jobs/{ident}/prepare',json={}).json()
+    client.post(f'/api/jobs/{ident}/approve',json={'revision':draft['revision']})
+    headers={'Authorization':'Bearer '+store.setting('extension_token')}
+    url=f'/api/companion/submitted/{ident}'
+    assert client.post(url,headers=headers,json={'revision':draft['revision'],'confirmed':False}).status_code==409
+    assert client.post(url,headers=headers,json={'revision':draft['revision']-1,'confirmed':True}).status_code==409
+    assert client.post(url,headers=headers,json={'revision':draft['revision'],'confirmed':True}).status_code==200
+    assert client.post(url,headers=headers,json={'revision':draft['revision'],'confirmed':True}).status_code==409
+    job=store.query('SELECT * FROM jobs WHERE id=?',(ident,))[0]
+    assert job['status']=='applied' and job['applied_at'] and job['approval'] is None
+
+def test_approved_answers_are_snapshotted_and_changes_revoke_access(client):
+    answers={'availability':'Two weeks','github_url':'https://github.com/example'}
+    assert client.post('/api/answers',json={'answers':answers,'confirmed':True}).status_code==200
+    ident=make_job(client)
+    draft=client.post(f'/api/jobs/{ident}/prepare',json={}).json()
+    approved=client.post(f'/api/jobs/{ident}/approve',json={'revision':draft['revision']}).json()
+    assert approved['approval']['answers']==answers
+    headers={'Authorization':'Bearer '+store.setting('extension_token')}
+    assert client.get(f'/api/companion/application/{ident}',headers=headers).json()['answers']==answers
+    client.post('/api/answers',json={'answers':{'availability':'One month'},'confirmed':True})
+    assert client.get(f'/api/companion/application/{ident}',headers=headers).status_code==409
+
 def test_review_workflow_and_stale_approval(client):
     ident=make_job(client)
     j=client.post(f'/api/jobs/{ident}/prepare',json={}).json()
@@ -160,3 +185,40 @@ def test_dismiss_message_hides_it_without_deleting_sync_record(client):
     assert not any(m['id']=='newsletter' for m in client.get('/api/state').json()['messages'])
     assert store.query('SELECT reviewed FROM messages WHERE id=?',('newsletter',))[0]['reviewed']==2
     assert client.post('/api/messages/missing/dismiss').status_code==404
+def test_indeed_discovery_auth_filter_and_deduplication(client):
+    path='/api/companion/discovery/indeed'
+    assert client.get(path).status_code==401
+    headers={'Authorization':'Bearer '+store.setting('extension_token')}
+    store.save('automation',True)
+    assert client.get(path,headers=headers).json()['enabled']
+    row={'title':'Junior React Developer','company':'Example','location':'Lisboa','description':'React',
+         'url':'https://pt.indeed.com/rc/clk?jk=0123456789abcdef&tracking=one'}
+    payload={'jobs':[row]}
+    assert client.post(path,headers=headers,json=payload).json()['added']==1
+    row['url']='https://pt.indeed.com/rc/clk?jk=0123456789abcdef&tracking=two'
+    assert client.post(path,headers=headers,json=payload).json()['added']==0
+    row['url']='https://example.com/job'
+    assert client.post(path,headers=headers,json=payload).status_code==422
+    store.save('automation',False)
+    assert client.get(path,headers=headers).json()['enabled'] is False
+    assert client.post(path,headers=headers,json={'jobs':[]}).status_code==409
+
+
+def test_jobrapido_discovery_validation_and_deduplication(client):
+    path='/api/companion/discovery/jobrapido'
+    assert client.get(path).status_code==401
+    headers={'Authorization':'Bearer '+store.setting('extension_token')}
+    store.save('automation',True)
+    row={'title':'Junior React Developer','company':'Example','location':'Lisboa','description':'',
+         'url':'https://open.app.jobrapido.com/pt/3569571438094450688/?tracking=one'}
+    assert client.post(path,headers=headers,json={'jobs':[row]}).json()['added']==1
+    row['url']=row['url'].replace('one','two')
+    assert client.post(path,headers=headers,json={'jobs':[row]}).json()['added']==0
+    for url in ['https://example.com/pt/123/', 'https://open.app.jobrapido.com/uk/123/', 'http://open.app.jobrapido.com/pt/123/']:
+        row['url']=url
+        assert client.post(path,headers=headers,json={'jobs':[row]}).status_code==422
+    assert client.post(path,headers=headers,json={'error':'blocked'}).status_code==200
+    source=next(s for s in client.get('/api/state').json()['sources'] if s['id']=='jobrapido')
+    assert source['kind']=='companion' and source['error']
+    store.save('automation',False)
+    assert client.post(path,headers=headers,json={'jobs':[]}).status_code==409

@@ -4,15 +4,18 @@ from app.sources import fetch_source, reconcile_new_jobs, init_sources
 from app import store
 import json
 
-def test_portuguese_job_sites_are_browse_sources(tmp_path,monkeypatch):
+def test_verified_collectors_are_automatic_and_keep_disabled_preference(tmp_path,monkeypatch):
     monkeypatch.setattr(store,'DATA',tmp_path)
     store.init()
+    init_sources()
+    store.execute("UPDATE sources SET enabled=0,kind='browser' WHERE id='randstad'")
     init_sources()
     rows={row['id']:row for row in store.query('SELECT id,kind,url FROM sources')}
     expected={'indeed':'pt.indeed.com','teamlyzer':'pt.teamlyzer.com','expresso':'expressoemprego.pt','jooble':'pt.jooble.org','jobrapido':'pt.jobrapido.com','portalemprego':'portalemprego.pt','randstad':'randstad.pt','adecco':'adecco.com/pt-pt'}
     for ident,host in expected.items():
-        assert rows[ident]['kind']=='browser'
+        assert rows[ident]['kind']==('browser' if ident in {'indeed','jooble','jobrapido'} else 'public')
         assert host in rows[ident]['url']
+    assert store.query("SELECT enabled FROM sources WHERE id='randstad'")[0]['enabled']==0
 
 def test_adapters_normalise_public_payloads():
     payloads={

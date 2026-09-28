@@ -5,6 +5,7 @@ from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parent.parent
 OUT=ROOT/'test-results';OUT.mkdir(exist_ok=True)
 source=(ROOT/'extension/popup.js').read_text(encoding='utf-8')
+source=source.replace('// FORM_HELPERS', (ROOT/'extension/form.js').read_text(encoding='utf-8'))
 extract=source[source.index('function extractListing()'):source.index('function sameApplication(')]
 matching=source[source.index('function sameApplication('):source.index('function fillForm(')]
 fill=source[source.index('function fillForm('):source.index('async function guarded(')]
@@ -40,7 +41,7 @@ with tempfile.TemporaryDirectory(prefix='compass-brave-',ignore_cleanup_errors=T
     assert not page.evaluate('('+matching+")( 'https://example.test/jobs/123', 'https://example.test/jobs/456')")
     assert page.evaluate('('+matching+")( 'https://jobs.ashbyhq.com/company/job-123', 'https://jobs.ashbyhq.com/company/job-123/application')")
     assert not page.evaluate('('+matching+")( 'https://jobs.ashbyhq.com/company/job-123', 'https://jobs.ashbyhq.com/company/job-456/application')")
-    snapshot={'profile':{'first_name':'Test','last_name':'Person','email':'test@example.com','phone':'000'},'letter':'Test letter'}
+    snapshot={'url':page.url,'profile':{'first_name':'Test','last_name':'Person','email':'test@example.com','phone':'000'},'letter':'Test letter'}
     result=page.evaluate('args => ('+fill+')(args[0],args[1])',[snapshot,{'data':'JVBERi0xLjQ=','name':'test.pdf'}])
     assert page.locator('[name="candidate[first_name]"]').input_value()=='Test'
     assert page.locator('[name="candidate[last_name]"]').input_value()=='Person'
@@ -64,5 +65,31 @@ with tempfile.TemporaryDirectory(prefix='compass-brave-',ignore_cleanup_errors=T
     assert page.locator('[name=random_salary]').input_value()==''
     assert page.locator('form [name=email]').input_value()==''
     assert ashby_result['filled']
+    page.set_content('''<form onsubmit="window.submitted++;return false">
+      <label>First name<input name="first_name"></label><label>Last name<input name="last_name"></label>
+      <label>Email<input name="email"></label><label>Resume<input name="resume" type="file"></label>
+      <label>LinkedIn URL<input name="linkedin_url" type="url"></label>
+      <label>GitHub URL<input name="github_url" type="url"></label>
+      <label>Portfolio URL<input name="portfolio_url" type="url" value="https://existing.example"></label>
+      <label>Availability<input name="availability"></label>
+      <label>Availability for weekend shifts<input name="weekend" required></label>
+      <label>Salary expectations<input name="salary_expectations" required></label>
+      <label>Work authorisation<input name="right_to_work_portugal" required></label>
+      <label><input name="consent" type="checkbox" required>I agree</label><button>Submit</button>
+    </form><script>window.submitted=0</script>''')
+    snapshot['answers']={'linkedin_url':'https://www.linkedin.com/in/example','github_url':'https://github.com/example','portfolio_url':'https://portfolio.example','availability':'Two weeks','salary_expectations':'30000','right_to_work_portugal':'Yes'}
+    result=page.evaluate('args => ('+fill+')(args[0],args[1])',[snapshot,{'data':'JVBERi0xLjQ=','name':'test.pdf'}])
+    assert page.locator('[name=linkedin_url]').input_value()==snapshot['answers']['linkedin_url']
+    assert page.locator('[name=github_url]').input_value()==snapshot['answers']['github_url']
+    assert page.locator('[name=portfolio_url]').input_value()=='https://existing.example'
+    assert page.locator('[name=availability]').input_value()=='Two weeks'
+    for name in ['weekend','salary_expectations','right_to_work_portugal']:
+        assert page.locator('[name='+name+']').input_value()==''
+    assert not page.locator('[name=consent]').is_checked()
+    assert page.evaluate('window.submitted')==0
+    page.locator('[name=github_url]').fill('')
+    snapshot['answers']['github_url']='javascript:alert(1)'
+    page.evaluate('args => ('+fill+')(args[0],args[1])',[snapshot,{'data':'JVBERi0xLjQ=','name':'test.pdf'}])
+    assert page.locator('[name=github_url]').input_value()==''
     browser.close()
 print('PASS: extension loads in isolated Brave; pairing; JSON-LD capture; exact-job URL guard; approved contact/CV filling logic; sensitive fields untouched; zero submissions.')

@@ -1,4 +1,24 @@
-# Validation record — updated 25 September 2026
+# Validation record — updated 27 September 2026
+
+## Browser queue and submission recording — 27 September
+
+45 pytest tests and 8 Node queue tests pass. Companion, isolated workflow and real-worker Brave fixture smoke checks pass. Worker coverage includes tab opening/filling, CV attachment, persistent progress, duplicate prevention, pause, permission denial, closed tabs, changed approvals, interrupted opening, tab capacity and bounded service retries. Submission recording requires explicit user confirmation and the current approval revision; repeat requests are rejected. The filler validates the approved URL inside the page to cover navigation races.
+
+The first worker browser test accidentally reached a fictional Lever URL because Chromium did not intercept its initial extension-created navigation. No personal data was used or submitted. The test now blocks DNS for that host and reloads through fixture interception. Real employer form compatibility, user permission prompts, browser restarts and automatic submission are not certified by these tests. Automatic submission is not implemented.
+
+
+## Unblocked preparation update — 26 September
+
+44 pytest tests and the isolated browser workflow pass. Preparation now drafts all untouched new/saved jobs without a score, qualification, skills or five-item cutoff. Missing CV files are reported in activity and still block approval. Tests cover preserved flags, general CV selection for support roles, pause behavior, missing CV drafting, archived jobs, existing edits and full batches. Submission remains manual pending the user’s separate choice.
+
+## Automatic preparation queue — 26 September
+
+42 pytest tests pass (two existing dependency warnings). New tests cover eligibility selection, paused checks, missing CV, repeat runs, preserved edits and five-item batches. The isolated browser review workflow also passes. Preparation uses conditional updates and creates drafts only; no approvals or submissions are automated.
+
+## Confirmed-answer autofill — 26 September
+
+39 pytest tests pass (two existing dependency warnings). Companion and isolated workflow smoke checks pass. New tests first failed on missing approval answers and missing browser fills, then passed after implementation. Coverage includes approved-answer snapshots, access revoked after answer changes, profile links, availability, retained values, rejected non-HTTP links, skipped salary/eligibility/consent and zero submissions. JavaScript syntax passes. Employer compatibility is still fixture-tested; no live submissions or mailbox access were performed.
+
 
 ## Startup and confirmed-answer milestone — 25 September
 
@@ -47,3 +67,8 @@ All four English/Portuguese general/developer CV PDFs are present under ignored 
 - This is a single-user loopback app. It has no login or TLS and must not be exposed publicly in its current form.
 
 The two pytest warnings come from installed FastAPI/Starlette test dependencies, not from failing assertions. No known runtime warning occurred during the successful server start.
+
+
+## Queue recovery � 28 September 2026
+
+Companion 0.6.1 adds a 15-second timeout to application-queue dashboard requests, including submission recording. Missing form-reader reports now stop after six checks, keeping the tab open for manual inspection. Two regression tests reproduced the prior indefinite waits and pass with the fixes. All 15 Node queue/discovery tests pass; background JavaScript syntax and whitespace checks pass. No employer applications were filled or submitted during these tests. Reload is required to activate the extension update; allow the current Jobrapido discovery cycle to finish first.
