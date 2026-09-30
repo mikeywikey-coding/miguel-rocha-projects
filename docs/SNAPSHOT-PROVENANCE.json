@@ -3,7 +3,7 @@
   "snapshots": [
     {
       "source": "miguel-rocha-portfolio",
-      "commit": "92b93b72082afb28efab73b8295f628e6f0e9052",
+      "commit": "583317db78c748db1556af66de8845cd26548e8a",
       "destination": ".",
       "files": 506
     },
@@ -12,6 +12,13 @@
       "commit": "47c5acc26a7718dd3c3211c3453756a42bf1d68d",
       "destination": "projects/job-compass",
       "files": 37
+    },
+    {
+      "source": "pcremote",
+      "commit": "51efc7a605e1b6a0ebe252d12300a410b6f9dfd6",
+      "destination": "projects/pc-remote",
+      "files": 20,
+      "added": "2026-09-30"
     }
   ]
 }

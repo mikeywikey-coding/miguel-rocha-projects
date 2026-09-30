@@ -2,7 +2,7 @@
 
 [Back to the portfolio](../README.md)
 
-This repository contains seven independent projects; the BMW M4 ADRO mod is published on Nexus Mods. There is no shared install step: open a project's README for its environment and setup. Start with Job Compass for backend integration or Build Lab for React and calculation logic.
+This repository contains eight independent projects; the BMW M4 ADRO mod is published on Nexus Mods. There is no shared install step: open a project's README for its environment and setup. Start with Job Compass for backend integration or Build Lab for React and calculation logic.
 
 ## Where to read first
 
@@ -10,6 +10,7 @@ This repository contains seven independent projects; the BMW M4 ADRO mod is publ
 | --- | --- | --- |
 | [Job Compass](../projects/job-compass/) | `app/engine.py`, then `app/main.py` | `app/` contains matching, persistence, source adapters and Gmail integration; `web/` is the dashboard; `extension/` is the Brave companion; `tests/` contains automated checks; `scripts/` contains optional Windows startup helpers; `docs/` records development history. |
 | [Build Lab](../projects/build-lab/) | `src/engine/buildModel.js`, then `src/Builder.jsx` | `src/engine/` implements build calculations; `src/catalogs/` contains catalogs; `tests/` covers calculations and `tests/ui/` browser interactions; `public/images/` holds game-related assets; `research/` holds attributed upstream inputs. |
+| [PC Remote](../projects/pc-remote/) | `server.py` (its opening docstring lists the security checks), then `tests/test_server.py` | `controller.py` drives Windows input and audio; `keys.py` parses hotkeys; `store.py` keeps configuration, hotkeys and paired devices; `web/` contains the phone interface and its assets; `tests/` runs with the input layer stubbed out. Running the server enables real PC controls. |
 | [Workout Tracker](../projects/workout-tracker/) | `app/js/state.js`, then `app/js/main.js` | `app/js/` contains screen and state modules; `app/icons/` contains app icons; `app/media/` contains attributed exercise images; `app/sw.js` handles offline caching. |
 | [Settlement Planner](../extensions/settlement-planner/) | `shared.js` | The flat structure separates shared estimation utilities, background scheduling, page reading and popup UI. |
 | [TravAlarm](../extensions/travalarm/) | `state.js`, then `scanners.js` | The flat structure separates data fetching, scanning, rendering, notifications and offscreen audio. Script loading order is declared in the manifest and HTML. |
@@ -20,7 +21,7 @@ This repository contains seven independent projects; the BMW M4 ADRO mod is publ
 
 - Build Lab's `research/nba2k27-builder-dataset/` groups upstream data by animations, badges, bodies, cap breakers, overall, reference and takeovers. `research/locker-chunks/` contains external calculation inputs used by the app. These are attributed inputs, not original portfolio code.
 - `node_modules/`, `dist/`, Python caches and local environments may appear after running a project. They are ignored and are not part of the committed portfolio.
-- Job Compass creates private state under ignored `data/`, which is not supplied with a clone.
+- Job Compass creates private state under ignored `data/`. PC Remote creates ignored local configuration and paired-device records. Neither is supplied with a clone.
 - Development plans under Job Compass are historical records. They describe the original workspace and earlier milestones; the current README and validation notes take precedence.
 - See [attribution](../ATTRIBUTION.md) for third-party media and data. Original working repositories remain separate from this curated snapshot.
 
@@ -28,4 +29,4 @@ This repository contains seven independent projects; the BMW M4 ADRO mod is publ
 
 The September 2026 cleanup checks folder contents, Markdown links, local extension assets, Python parsing and JavaScript syntax. Selected compact source modules are formatted for readability, with syntax-tree comparisons used to verify unchanged logic. Tests and build results are recorded in [validation](VALIDATION.md).
 
-This is a light review, not a security audit or a guarantee of compatibility with current game pages. The extensions require browser APIs and an appropriate page/session. Live game actions are not exercised by the portfolio checks.
+This is a light review, not a security audit or a guarantee of compatibility with current game pages. The extensions require browser APIs and an appropriate page/session; PC Remote requires Windows. Neither live game actions nor PC control commands are exercised by the portfolio checks.

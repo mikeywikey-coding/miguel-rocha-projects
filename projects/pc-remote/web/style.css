@@ -1,0 +1,784 @@
+/* PC Remote — warm neutral ground, clay accent, follows the phone's appearance. */
+
+:root {
+  --ground: #f0eee6;
+  --surface: #faf9f6;
+  --sunken: #e8e5da;
+  --ink: #23211e;
+  --ink-muted: #6e6a61;
+  --hairline: #dfdace;
+  --hairline-strong: #cdc6b6;
+  --accent: #c15f3c;
+  --accent-soft: rgba(193, 95, 60, 0.1);
+  --on-accent: #fdfbf7;
+  --ok: #5f7d4f;
+  /* Deliberately redder than the clay accent so destructive controls never
+     read as merely "accented". */
+  --danger: #9c2318;
+  --danger-soft: rgba(156, 35, 24, 0.09);
+  --shadow: 0 1px 2px rgba(35, 33, 30, 0.06);
+
+  --r-sm: 9px;
+  --r-md: 12px;
+  --r-lg: 16px;
+
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --serif: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  --tabbar-h: 56px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #1b1a17;
+    --surface: #24231f;
+    --sunken: #151412;
+    --ink: #efece3;
+    --ink-muted: #9b958a;
+    --hairline: #35332d;
+    --hairline-strong: #46433b;
+    --accent: #d97757;
+    --accent-soft: rgba(217, 119, 87, 0.15);
+    --on-accent: #1b1a17;
+    --ok: #8fb07a;
+    --danger: #e08a72;
+    --danger-soft: rgba(224, 138, 114, 0.13);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; overscroll-behavior: none; }
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font: 15px/1.45 var(--sans);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+/* Nothing in the app is selectable — a long-press should never raise the
+   iOS copy/paste callout over a control. */
+::selection { background: transparent; }
+
+button, input { font: inherit; color: inherit; -webkit-appearance: none; appearance: none; border: none; background: none; }
+
+button { cursor: pointer; }
+
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.hidden { display: none !important; }
+
+.ico {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: 0 0 auto;
+}
+
+.ico.solid { fill: currentColor; stroke-width: 1.4; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ── PIN gate ───────────────────────────────────────────── */
+
+.pin-screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background: var(--ground);
+  z-index: 50;
+}
+
+.pin-card { width: 100%; max-width: 300px; text-align: center; }
+
+.pin-mark {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  border-radius: 17px;
+  background: var(--accent);
+  color: var(--on-accent);
+  display: grid;
+  place-items: center;
+}
+
+.pin-mark .ico { width: 27px; height: 27px; }
+
+.pin-card h1 {
+  font: 400 30px/1.15 var(--serif);
+  letter-spacing: -0.015em;
+}
+
+.pin-card p {
+  color: var(--ink-muted);
+  font-size: 13.5px;
+  margin: 10px 0 24px;
+  min-height: 38px;
+  text-wrap: balance;
+}
+
+.pin-card p.error { color: var(--danger); }
+
+#pinInput {
+  width: 100%;
+  padding: 15px;
+  text-align: center;
+  font: 400 24px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.32em;
+  text-indent: 0.32em;
+  background: var(--surface);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-md);
+  color: var(--ink);
+}
+
+#pinInput::placeholder { color: var(--hairline-strong); }
+#pinInput:focus { border-color: var(--accent); }
+
+/* ── Buttons ────────────────────────────────────────────── */
+
+.btn-primary {
+  padding: 14px 20px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--r-md);
+}
+
+.pin-card .btn-primary { width: 100%; margin-top: 10px; }
+.btn-primary:active { filter: brightness(0.92); }
+
+.btn-quiet {
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.btn-quiet:active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.btn-quiet.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+.btn-danger {
+  padding: 10px 16px;
+  background: var(--danger-soft);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  color: var(--danger);
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border-radius: var(--r-sm);
+  color: var(--ink-muted);
+}
+
+.icon-btn:active { background: var(--accent-soft); color: var(--accent); }
+
+/* ── Shell ──────────────────────────────────────────────── */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+}
+
+.views { flex: 1 1 auto; position: relative; min-height: 0; }
+
+.view {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.view.active { display: flex; }
+
+.tabbar {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--hairline);
+  background: var(--surface);
+  /* Cap the home-indicator inset — the full safe area left a dead band
+     under the tabs. */
+  padding-bottom: min(env(safe-area-inset-bottom), 5px);
+}
+
+.tab {
+  height: var(--tabbar-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.01em;
+  color: var(--ink-muted);
+}
+
+.tab .ico { width: 21px; height: 21px; }
+.tab.active { color: var(--accent); }
+
+.hint { font-size: 11.5px; color: var(--ink-muted); flex: 0 0 auto; }
+
+/* ── Touchpad ───────────────────────────────────────────── */
+
+.pad-wrap { flex: 1 1 auto; display: flex; gap: 10px; min-height: 190px; }
+
+/* Recessed surface: darker than the ground, with a faint dot grid so it
+   reads as a physical pad rather than an empty box. */
+.trackpad {
+  flex: 1 1 auto;
+  background:
+    radial-gradient(circle, var(--hairline-strong) 0.7px, transparent 0.7px) 0 0 / 15px 15px,
+    var(--sunken);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 1px 3px rgba(35, 33, 30, 0.07);
+  touch-action: none;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+/* Compact pad repeated on Hotkeys and Keys, so the cursor is always
+   reachable without switching tabs. */
+.trackpad.mini {
+  flex: 0 0 118px;
+  border-radius: var(--r-md);
+  margin-top: 8px;
+}
+
+.trackpad.pressed { border-color: var(--accent); }
+.trackpad.dragging { background-color: var(--accent-soft); border-color: var(--accent); }
+
+.trackpad-hint {
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.8;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.trackpad.mini .trackpad-hint { font-size: 11px; }
+.trackpad.used .trackpad-hint { opacity: 0; }
+
+.scroll-strip {
+  flex: 0 0 44px;
+  background: var(--sunken);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 1px 3px rgba(35, 33, 30, 0.07);
+  touch-action: none;
+  display: grid;
+  place-items: center;
+  color: var(--hairline-strong);
+}
+
+.scroll-strip:active { border-color: var(--accent); color: var(--accent); }
+
+.click-row { flex: 0 0 auto; display: flex; gap: 8px; }
+
+.click-btn {
+  flex: 1;
+  padding: 15px 0;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+  font-size: 14px;
+}
+
+.click-btn:active,
+.click-btn.held { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* Four shortcuts that are worth reaching without leaving the pad. */
+.fav-row { flex: 0 0 auto; display: flex; gap: 8px; }
+
+.fav-btn {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 4px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 12.5px;
+}
+
+.fav-btn small { font-family: var(--mono); font-size: 9px; color: var(--ink-muted); }
+.fav-btn:active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.fav-btn:active small { color: var(--on-accent); opacity: 0.72; }
+
+.settings-row {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  padding: 10px 2px 0;
+}
+
+.settings-row .speed { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; }
+.settings-row .speed input { flex: 1; min-width: 0; }
+
+.settings-row .checkbox { display: flex; align-items: center; gap: 7px; flex: 0 0 auto; }
+
+.settings-row input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 5px;
+  background: var(--surface);
+  flex: 0 0 auto;
+}
+
+.settings-row input[type="checkbox"]:checked {
+  background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-6'/%3E%3C/svg%3E") center/12px no-repeat;
+  border-color: var(--accent);
+}
+
+input[type="range"] { height: 28px; background: transparent; }
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--hairline-strong);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 1px 2px rgba(35, 33, 30, 0.25);
+}
+
+/* ── Keys ───────────────────────────────────────────────── */
+
+.type-box { display: flex; gap: 8px; flex: 0 0 auto; }
+
+.type-field {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 14px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  color: var(--ink);
+}
+
+.type-field::placeholder { color: var(--ink-muted); }
+.type-field:focus { border-color: var(--accent); }
+
+.mod-row { display: flex; gap: 8px; flex: 0 0 auto; }
+
+.mod {
+  flex: 1;
+  padding: 12px 0;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow);
+  font-size: 14px;
+}
+
+.mod.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* The key rows stretch to fill the screen rather than leaving dead space
+   under the last row. */
+.key-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 8px;
+  flex: 1.6 1 0;
+  min-height: 150px;
+}
+
+.key {
+  padding: 15px 3px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow);
+  font-size: 12.5px;
+}
+
+.key:active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+.arrows {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: ". up ." "left down right";
+  gap: 8px;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+  flex: 1 1 0;
+  min-height: 112px;
+}
+
+.arrow { font-size: 17px; }
+.arrow.up { grid-area: up; }
+.arrow.left { grid-area: left; }
+.arrow.down { grid-area: down; }
+.arrow.right { grid-area: right; }
+
+.fn-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 6px;
+  flex: 1 1 0;
+  min-height: 80px;
+}
+
+.fn-grid .key { padding: 11px 0; font-size: 11.5px; font-family: var(--mono); }
+
+/* ── Hotkeys ────────────────────────────────────────────── */
+
+.page-tab-row { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+
+.page-tabs {
+  display: flex;
+  gap: 5px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* All pages fit at once — no horizontal scroll to discover them. */
+.page-tab {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 7px 4px;
+  background: transparent;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.page-tab.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+.pill-btn {
+  flex: 0 0 auto;
+  padding: 7px 11px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--ink);
+}
+
+.pill-btn.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+.hotkey-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(72px, 1fr);
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.hotkey-btn {
+  min-height: 72px;
+  padding: 10px 6px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.hotkey-btn small {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+  word-break: break-all;
+}
+
+.hotkey-btn:active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.hotkey-btn:active small { color: var(--on-accent); opacity: 0.72; }
+
+.hotkey-grid.editing .hotkey-btn {
+  border-style: dashed;
+  border-color: var(--accent);
+  animation: nudge 0.5s ease-in-out infinite alternate;
+  /* A drag has to own the gesture, or the browser reads it as a pan and
+     cancels the pointer halfway through. */
+  touch-action: none;
+}
+
+@keyframes nudge {
+  from { transform: rotate(-0.45deg); }
+  to { transform: rotate(0.45deg); }
+}
+
+/* While something is being dragged the nudge has to stop everywhere: it
+   animates `transform`, and a running animation outranks the inline transform
+   that follows the finger. Must stay after the .editing rule to win on order. */
+.hotkey-grid.reordering .hotkey-btn { animation: none; }
+
+/* Three classes, so this beats `.hotkey-grid.editing .hotkey-btn` on borders. */
+.hotkey-grid .hotkey-btn.dragging {
+  z-index: 5;
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 8px 20px rgba(35, 33, 30, 0.28);
+}
+
+.hotkey-grid .hotkey-btn.dragging small { color: var(--on-accent); opacity: 0.72; }
+
+.hotkey-btn.add {
+  background: transparent;
+  box-shadow: none;
+  border-style: dashed;
+  border-color: var(--accent);
+  color: var(--accent);
+  font-size: 22px;
+  animation: none;
+}
+
+/* ── Media ──────────────────────────────────────────────── */
+
+/* The three panels share the height instead of stacking at the top. */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  padding: 14px 16px 16px;
+  flex: 1 1 0;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.panel.playback { flex: 1.1 1 0; min-height: 132px; }
+
+.panel-title {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 13px;
+}
+
+.media-row { display: flex; align-items: center; justify-content: center; gap: 22px; }
+
+.media-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--ground);
+  border: 1px solid var(--hairline);
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+}
+
+.media-btn .ico { width: 21px; height: 21px; }
+
+.media-btn.primary {
+  width: 70px;
+  height: 70px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.media-btn.primary .ico { width: 26px; height: 26px; }
+.media-btn:active { filter: brightness(0.93); }
+
+.vol-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+#muteBtn { margin-left: 0; color: var(--ink); }
+#muteBtn .when-muted { display: none; }
+#muteBtn.muted .when-live { display: none; }
+#muteBtn.muted .when-muted { display: block; color: var(--danger); }
+
+.vol-label {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.vol-slider { width: 100%; }
+.vol-steps { display: flex; gap: 8px; margin-top: 8px; }
+.vol-steps .btn-quiet { flex: 1; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Two rows of equal buttons — no orphaned empty cell. */
+.power-rows { display: flex; flex-direction: column; gap: 8px; }
+.power-row { display: flex; gap: 8px; }
+
+.power-btn {
+  flex: 1;
+  padding: 14px 3px;
+  background: var(--ground);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-size: 12.5px;
+}
+
+.power-btn.danger { color: var(--danger); }
+.power-btn:active { filter: brightness(0.95); }
+.power-btn.confirm { background: var(--danger); border-color: var(--danger); color: var(--on-accent); }
+
+.disconnect { margin-top: 10px; align-self: flex-start; font-size: 12.5px; color: var(--ink-muted); }
+
+/* ── Edit sheet ─────────────────────────────────────────── */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  background: rgba(35, 33, 30, 0.42);
+  display: flex;
+  align-items: flex-end;
+  z-index: 40;
+}
+
+.sheet-panel {
+  width: 100%;
+  max-height: 88dvh;
+  overflow-y: auto;
+  background: var(--ground);
+  border-radius: 22px 22px 0 0;
+  padding: 22px 16px calc(20px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sheet-panel h2 { font: 400 21px/1.2 var(--serif); }
+
+.field, .field-stack { display: flex; flex-direction: column; gap: 7px; }
+
+.field-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.field input {
+  padding: 13px 14px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.field input::placeholder { color: var(--ink-muted); }
+.field input:focus { border-color: var(--accent); }
+
+.preview { font-size: 12.5px; color: var(--ink-muted); }
+
+.preview code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.sheet-actions { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
+.sheet-actions .btn-primary { flex: 1; }
+
+/* ── Alt+Tab switcher ───────────────────────────────────── */
+
+.switch-row { display: flex; gap: 8px; }
+
+.switch-btn {
+  flex: 1;
+  padding: 19px 0;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.switch-btn:active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* ── Toast ──────────────────────────────────────────────── */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom));
+  transform: translate(-50%, 10px);
+  background: var(--ink);
+  color: var(--ground);
+  padding: 10px 17px;
+  border-radius: 999px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 60;
+  max-width: 82vw;
+  text-align: center;
+}
+
+.toast.show { opacity: 1; transform: translate(-50%, 0); }

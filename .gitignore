@@ -21,5 +21,10 @@ playwright-report/
 .DS_Store
 Thumbs.db
 
+# Private PC Remote runtime state
+projects/pc-remote/config.json
+projects/pc-remote/hotkeys.json
+projects/pc-remote/devices.json
+
 # Private Job Compass runtime state
 projects/job-compass/data/

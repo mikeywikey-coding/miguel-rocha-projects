@@ -4,14 +4,14 @@ This repository is a curated snapshot, not a replacement for the original workin
 
 ## Organisation
 
-- `projects/`: Job Compass, Build Lab and Workout Tracker. The M4 mod is linked to its Nexus Mods page only.
+- `projects/`: Job Compass, Build Lab, PC Remote and Workout Tracker. The M4 mod is linked to its Nexus Mods page only.
 - `extensions/`: only the four extensions selected for the CV.
 - `assets/`: a selected Build Lab screenshot.
 - `ATTRIBUTION.md`: third-party sources and ownership notes.
 
 ## Excluded material
 
-No existing Git histories, installed dependencies, browser profiles, local agent settings, personal CV documents, deployment credentials or large mod archives are included.
+No existing Git histories, installed dependencies, browser profiles, local agent settings, personal CV documents, local PC Remote configuration and paired devices, deployment credentials or large mod archives are included.
 
 The original project locations and original Git histories remain untouched. Build Lab's build command is adapted to standalone Vite; extension application code is copied unchanged.
 

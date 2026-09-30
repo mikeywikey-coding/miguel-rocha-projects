@@ -1,5 +1,14 @@
 # Portfolio snapshot validation
 
+## PC Remote security rework — 30 September 2026
+
+PC Remote was taken out of the portfolio while its server was reworked for a public repository, then added back from the reworked source.
+
+- The server now checks the `Host` header (DNS rebinding) and the WebSocket origin (cross-site WebSocket hijacking), pairs phones with the PIN and then signs them in with per-device tokens stored only as SHA-256 hashes, closes connections that do not sign in within 10 seconds, limits failed attempts per address and overall, and validates every command.
+- 39 pytest tests passed on Python 3.12.10 with websockets 17.0.1. The tests replace the Windows input layer with a stub, so no input or power commands were sent.
+- A smoke test against a locally running server, also with the stubbed input layer, passed 11 of 11 checks: the page served with security headers and no `Server` banner, a refused foreign `Host`, a refused cross-origin WebSocket, wrong-PIN refusal, pairing, token sign-in, ping, the sign-in timeout and hashed token storage.
+- Local configuration, paired devices, hotkey layouts and a development note are excluded. The 20 snapshot files were checked for credential patterns and personal host names and addresses; no findings.
+
 ## Recruiter review cleanup — 26 September 2026
 
 - Inspected the tracked folder inventory across all projects. Added a reviewer guide explaining entry points, nested folders, generated files and third-party inputs.

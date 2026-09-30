@@ -1,0 +1,15 @@
+# Personal state, not part of the app.
+# (Git has no trailing comments — patterns must be alone on their line.)
+
+# contains your PIN
+config.json
+
+# your own hotkey layout; defaults live in store.py
+hotkeys.json
+
+__pycache__/
+*.pyc
+
+# paired phones (token hashes)
+devices.json
+.pytest_cache/

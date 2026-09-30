@@ -63,6 +63,7 @@ Explore the full collection, including the four selected browser extensions.
 | --- | --- | --- |
 | [Job Compass](projects/job-compass/) | Discovers relevant jobs, prepares reviewed applications and tracks Gmail replies | Python, FastAPI, SQLite, OAuth, API integration, Brave extension |
 | [Build Lab](projects/build-lab/) | NBA 2K27 build planning, linked attributes, saved builds and comparisons | React, JavaScript, state management, automated tests |
+| [PC Remote](projects/pc-remote/) | Controls a Windows PC from a phone over the local network, with paired devices and hardened sign-in | Python, WebSockets, authentication, pytest, touch interfaces |
 | [Workout Tracker](projects/workout-tracker/) | Logs training, tracks progress and stores workout history | JavaScript, responsive UI, PWA, local storage |
 | [Travian Settlement Planner](extensions/settlement-planner/) | Estimates when culture points reach settlement thresholds | Data parsing, forecasting, event simulation |
 | [TravAlarm](extensions/travalarm/) | Tracks game events and schedules browser/audio alerts | Manifest V3, service workers, Chrome APIs |
@@ -75,9 +76,9 @@ Explore the full collection, including the four selected browser extensions.
 | Area | Examples in this portfolio |
 | :--- | :--- |
 | **Frontend development** | React, JavaScript, responsive HTML/CSS, browser storage |
-| **Backend & integration** | Python, FastAPI, SQLite, OAuth, external APIs |
+| **Backend & integration** | Python, FastAPI, SQLite, WebSockets, OAuth, external APIs |
 | **Browser tooling** | Manifest V3, content scripts, service workers, DOM integration |
-| **Testing & workflow** | Git, calculation tests, API tests, documented setup and limitations |
+| **Testing & workflow** | Git, calculation tests, API tests, security tests, documented setup and limitations |
 | **3D work** | Blender modelling, vehicle modifications and release packaging |
 
 ## Explore the repository
@@ -86,7 +87,7 @@ Each project has its own README covering its purpose, source structure and how t
 
 This is a standalone portfolio with fresh Git history, assembled on 25 September 2026. These are curated snapshots of personal projects. Original working repositories remain separate. The portfolio uses the CV name **Workout Tracker**; some existing app screens retain the earlier **Leg Day** branding.
 
-Start with Job Compass for a complete dashboard, API integrations and browser companion; Build Lab for React and calculation logic, or the extension folders for browser integration.
+Start with Job Compass for a complete dashboard, API integrations and browser companion; Build Lab for React and calculation logic; PC Remote for Python, WebSockets and network security, or the extension folders for browser integration.
 
 ## Scope and attribution
 
