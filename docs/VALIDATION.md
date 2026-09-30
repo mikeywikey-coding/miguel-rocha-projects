@@ -2,7 +2,7 @@
 
 ## Recruiter review cleanup — 26 September 2026
 
-- Inspected the tracked folder inventory across all eight projects. Added a reviewer guide explaining entry points, nested folders, generated files and third-party inputs.
+- Inspected the tracked folder inventory across all projects. Added a reviewer guide explaining entry points, nested folders, generated files and third-party inputs.
 - Checked all tracked Markdown links, all 77 JavaScript/MJS files with Node syntax checks, Python parsing, static relative JavaScript imports (including Vite extension resolution), and the five extension manifests' local scripts, styles, icons, popups, options pages and web-accessible resources. No unresolved references were found by these checks.
 - Formatted six Python modules with Black 26.3.1 and six selected JavaScript modules with Prettier 3.6.2. Python AST and Babel AST comparisons confirmed unchanged parsed logic; original quoted property keys were preserved. Third-party research code and Travian extension JavaScript were not modified.
 - Job Compass: 38 pytest tests passed, plus the isolated Brave companion and application-workflow smoke checks. No real employer submissions or personal mailbox access occurred.
@@ -29,6 +29,5 @@ Checked on 25-26 September 2026 while assembling this new repository:
 - Main portfolio and project README relative links resolve.
 - The 544 candidate Git files were checked for common credential patterns, personal document/database filenames and files over 10 MB. No findings. This is a limited packaging check, not a full security audit.
 - Git whitespace checks report pre-existing trailing whitespace in some copied project sources; these snapshots preserve the original code.
-- Both M4 release sizes and SHA-256 hashes match the documented inventory. Packages remain on Nexus Mods and are not committed.
 
 No live game sessions, employer form tests or full Workout Tracker browser tests were performed during portfolio assembly. Job Compass requires fresh local configuration; its runtime data, Gmail credentials, CV PDFs and pairing keys are excluded.

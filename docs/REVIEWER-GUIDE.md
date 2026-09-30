@@ -2,7 +2,7 @@
 
 [Back to the portfolio](../README.md)
 
-This collection contains eight independent projects. There is no shared install step: open a project's README for its environment and setup. Start with Job Compass for backend integration or Build Lab for React and calculation logic.
+This repository contains seven independent projects; the BMW M4 ADRO mod is published on Nexus Mods. There is no shared install step: open a project's README for its environment and setup. Start with Job Compass for backend integration or Build Lab for React and calculation logic.
 
 ## Where to read first
 
@@ -15,7 +15,6 @@ This collection contains eight independent projects. There is no shared install 
 | [TravAlarm](../extensions/travalarm/) | `state.js`, then `scanners.js` | The flat structure separates data fetching, scanning, rendering, notifications and offscreen audio. Script loading order is declared in the manifest and HTML. |
 | [Travian QoL](../extensions/travian-qol/) | `lib/registry.js`, then `content.js` | `features/` contains independently registered modules; `options/` contains settings; `lib/` defines the registry contract. Feature directory names describe their roles. |
 | [Night Mode](../extensions/night-mode/) | `popup.js`, then `content.js` | The flat structure contains the popup, theme logic, icon and extension manifest. |
-| [BMW M4 ADRO](../projects/bmw-m4-adro/) | `README.md`, then `releases.json` | A published-mod case study and release inventory. This is not a Blender source checkout; the supplied packages contained no editable Blender file. |
 
 ## Source and generated material
 

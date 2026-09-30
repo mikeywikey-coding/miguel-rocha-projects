@@ -51,7 +51,7 @@ Blender was the main tool used for the modelling work on this Forza Horizon 6 mo
 
 `Blender` `3D modelling` `Vehicle modding` `Release preparation`
 
-[Read the case study →](projects/bmw-m4-adro/) · [Published mod on Nexus Mods ↗](https://www.nexusmods.com/forzahorizon6/mods/469)
+[View the published mod on Nexus Mods ↗](https://www.nexusmods.com/forzahorizon6/mods/469)
 
 This is collaborative work, not a claim of sole authorship. Downloads are available on Nexus Mods; large game archives are not stored here.
 
@@ -68,7 +68,7 @@ Explore the full collection, including the four selected browser extensions.
 | [TravAlarm](extensions/travalarm/) | Tracks game events and schedules browser/audio alerts | Manifest V3, service workers, Chrome APIs |
 | [Travian QoL](extensions/travian-qol/) | Configurable interface improvements and planning tools | Modular JavaScript, DOM integration, persistent settings |
 | [Travian Night Mode](extensions/night-mode/) | Persistent dark theme for dynamically changing pages | CSS, MutationObserver, preference synchronisation |
-| [BMW M4 ADRO Kit](projects/bmw-m4-adro/) | Published Forza Horizon 6 vehicle mod with two body variants | Blender, 3D modelling, game modding |
+| [BMW M4 ADRO Kit ↗](https://www.nexusmods.com/forzahorizon6/mods/469) | Published Forza Horizon 6 vehicle mod with two body variants | Blender, 3D modelling, game modding |
 
 ## Skills in practice
 
