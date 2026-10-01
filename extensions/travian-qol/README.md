@@ -1,5 +1,3 @@
-[Back to the portfolio](../../README.md)
-
 # Travian QoL
 
 Combines independently configurable improvements to the Travian interface.
@@ -14,6 +12,4 @@ Combines independently configurable improvements to the Travian interface.
 
 Open `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select this folder. The manifest lists the requested permissions and supported sites. Review those permissions before use with a game account.
 
-The preserved source includes the original feature set, including report-opening and ad-related features, beyond the examples highlighted in the CV.
-
-This is a source snapshot of a personal extension. No live game interactions were performed while assembling this portfolio. Original application code is preserved.
+Each feature in `features/` registers itself with the registry and can be switched on or off from the options page.

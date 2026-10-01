@@ -1,0 +1,8 @@
+node_modules/
+dist/
+package-lock.json
+projects/build-lab/research/
+projects/build-lab/src/catalogs/*.json
+projects/build-lab/src/engine/*.json
+projects/workout-tracker/app/media/
+projects/job-compass/docs/plans/

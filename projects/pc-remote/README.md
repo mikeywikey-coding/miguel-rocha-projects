@@ -1,5 +1,3 @@
-[Back to the portfolio](../../README.md)
-
 # PC Remote
 
 Control a Windows PC from an iPhone: trackpad, live keyboard, editable hotkey
@@ -73,6 +71,7 @@ the name look dead while the IP still works.
 ## Using it
 
 **Touchpad**
+
 - Drag to move the cursor, tap to left-click.
 - Two-finger tap = right-click, three-finger tap = middle-click.
 - Two-finger drag, or the strip on the right, scrolls.
@@ -80,28 +79,31 @@ the name look dead while the IP still works.
   The pad tints and the left button goes down; drag, then lift to drop.
   Tap-then-tap-and-hold also works, but Windows reads the leading tap as the
   first half of a double-click, so prefer press-and-hold on files and title bars.
-- For a drag too long for one swipe, tap *Drag* to latch the left button down,
-  swipe as often as you need, then tap *Drag* again to drop. Long-pressing
-  *Middle* or *Right* latches those buttons the same way.
+- For a drag too long for one swipe, tap _Drag_ to latch the left button down,
+  swipe as often as you need, then tap _Drag_ again to drop. Long-pressing
+  _Middle_ or _Right_ latches those buttons the same way.
 - The text field above the pad types on the PC as you type.
-- *Speed* sets pointer sensitivity; *Natural scroll* flips the scroll direction.
+- _Speed_ sets pointer sensitivity; _Natural scroll_ flips the scroll direction.
 
 **Alt+Tab**
+
 - The Alt+Tab button (on the pad's favourites row and in Hotkeys) holds Alt
   down on the PC, so the window switcher stays on screen. Step through it with
-  *Prev* / *Next*, then *Select window*, or *Cancel* to go back.
+  _Prev_ / _Next_, then _Select window_, or _Cancel_ to go back.
 - Alt is released when you choose, when the app goes to the background, and by
   the PC itself if the phone drops off, so it can never be left stuck down.
 
 **Keys**
+
 - Characters typed in the text field land on the PC as you type; deleting in
   the field sends backspaces.
 - Esc, Tab, Enter, Backspace, Delete, Win, Space, PrtScn, the navigation
   cluster, arrows and F1 to F12.
 
 **Hotkeys**
+
 - Tap a button to fire it.
-- *Edit*, then tap a button to change it or `+` to add one. Long-pressing any
+- _Edit_, then tap a button to change it or `+` to add one. Long-pressing any
   button edits it without entering edit mode.
 - In edit mode, press and hold a button to lift it out of the grid and drag it
   to a new spot; the new order saves when you let go.
@@ -110,10 +112,11 @@ the name look dead while the IP still works.
 - Everything is stored in `hotkeys.json`, which you can also edit by hand.
 
 **Media**
+
 - Transport controls, a system volume slider, mute, and power actions (lock,
   sleep, sign out, restart, shut down). Sign out, restart and shut down need a
   second tap.
-- *Disconnect remote* at the bottom of Power unpairs the phone.
+- _Disconnect remote_ at the bottom of Power unpairs the phone.
 
 ## Hotkey syntax
 
@@ -138,12 +141,12 @@ error instead of being guessed at.
 { "pin": "58203914", "port": 8765 }
 ```
 
-| Key | Default | Meaning |
-| --- | --- | --- |
-| `pin` | random, 8 digits | Pairs new phones. At least 6 characters. Changing it signs out every paired phone. |
-| `port` | `8765` | HTTP and WebSocket port. Update the firewall rule to match. |
-| `allowed_hosts` | none | Extra host names to answer to, such as a Tailscale MagicDNS name. The PC's own names and addresses are always allowed. |
-| `bind` | `["0.0.0.0", "::"]` | Addresses to listen on. List a single address to listen on one network only. |
+| Key             | Default             | Meaning                                                                                                                |
+| --------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `pin`           | random, 8 digits    | Pairs new phones. At least 6 characters. Changing it signs out every paired phone.                                     |
+| `port`          | `8765`              | HTTP and WebSocket port. Update the firewall rule to match.                                                            |
+| `allowed_hosts` | none                | Extra host names to answer to, such as a Tailscale MagicDNS name. The PC's own names and addresses are always allowed. |
+| `bind`          | `["0.0.0.0", "::"]` | Addresses to listen on. List a single address to listen on one network only.                                           |
 
 Restart the server after editing it.
 
@@ -157,7 +160,7 @@ New-NetFirewallRule -DisplayName "PC Remote (8765)" -Direction Inbound `
 ```
 
 If the phone cannot resolve the `.local` name and you use Bonjour, note that
-its own firewall rules cover the *Public* profile only. This rule allows mDNS
+its own firewall rules cover the _Public_ profile only. This rule allows mDNS
 on any profile, again from the local subnet only:
 
 ```powershell
@@ -217,18 +220,19 @@ Changes to the Python files need a server restart.
 A paired phone can type and click on the PC, so the design goal is that
 nothing else can. These are the threats the server handles, and how:
 
-| Threat | Protection |
-| --- | --- |
-| Another device on the network guesses the PIN | Random 8-digit PIN by default (6 characters minimum, obvious ones flagged). Ten wrong attempts from one address lock it out for up to five minutes; IPv6 addresses count per /64, so rotating addresses doesn't help. After 30 failures in five minutes from all addresses combined, pairing pauses; already-paired phones keep working. |
-| A connection holds a slot open without signing in | Closed after 10 seconds. |
-| A web page, opened in any browser on the network, connects to the WebSocket (cross-site WebSocket hijacking) | The handshake must come from the app's own origin. |
-| A web page points its own domain at the PC (DNS rebinding) | Requests whose `Host` isn't one of the PC's names or addresses get a 403. |
-| A copy of the server's files leaks | The PIN pairs a phone once. After that the phone signs in with a random 256-bit token, and `devices.json` keeps only SHA-256 hashes of the tokens. |
-| A phone is lost | *Disconnect remote* unpairs a phone from the phone. Changing the PIN, or deleting `devices.json`, signs out every phone. |
-| Malformed or hostile commands | Every field is type-checked and clamped (pointer movement, scroll, click count, 500 characters of text per message, volume). Unknown commands and keys are refused, power actions come from a fixed list, and a message over 256 KB closes the connection. Unexpected errors reply with a generic message, never internal details. |
-| Framing, sniffing, or reading files outside the app | Content-Security-Policy, `X-Frame-Options: DENY`, `nosniff` and `no-referrer` on every page. Static files are served only from `web/`. No `Server` banner. |
+| Threat                                                                                                       | Protection                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Another device on the network guesses the PIN                                                                | Random 8-digit PIN by default (6 characters minimum, obvious ones flagged). Ten wrong attempts from one address lock it out for up to five minutes; IPv6 addresses count per /64, so rotating addresses doesn't help. After 30 failures in five minutes from all addresses combined, pairing pauses; already-paired phones keep working. |
+| A connection holds a slot open without signing in                                                            | Closed after 10 seconds.                                                                                                                                                                                                                                                                                                                 |
+| A web page, opened in any browser on the network, connects to the WebSocket (cross-site WebSocket hijacking) | The handshake must come from the app's own origin.                                                                                                                                                                                                                                                                                       |
+| A web page points its own domain at the PC (DNS rebinding)                                                   | Requests whose `Host` isn't one of the PC's names or addresses get a 403.                                                                                                                                                                                                                                                                |
+| A copy of the server's files leaks                                                                           | The PIN pairs a phone once. After that the phone signs in with a random 256-bit token, and `devices.json` keeps only SHA-256 hashes of the tokens.                                                                                                                                                                                       |
+| A phone is lost                                                                                              | _Disconnect remote_ unpairs a phone from the phone. Changing the PIN, or deleting `devices.json`, signs out every phone.                                                                                                                                                                                                                 |
+| Malformed or hostile commands                                                                                | Every field is type-checked and clamped (pointer movement, scroll, click count, 500 characters of text per message, volume). Unknown commands and keys are refused, power actions come from a fixed list, and a message over 256 KB closes the connection. Unexpected errors reply with a generic message, never internal details.       |
+| Framing, sniffing, or reading files outside the app                                                          | Content-Security-Policy, `X-Frame-Options: DENY`, `nosniff` and `no-referrer` on every page. Static files are served only from `web/`. No `Server` banner.                                                                                                                                                                               |
 
 **Limits**
+
 - **Traffic is plain HTTP.** Anyone who can capture traffic on the network can
   read the PIN during pairing, the device token, and what you type. Use it on a
   network you trust, not public Wi-Fi.
@@ -253,16 +257,12 @@ input layer is replaced by a stub, so the tests never move the mouse or type.
 
 ## Files
 
-| File | Purpose |
-| --- | --- |
-| `server.py` | HTTP and WebSocket server: host and origin checks, pairing, rate limits, command validation |
-| `controller.py` | Windows input: mouse, keyboard, volume, power |
-| `keys.py` | Hotkey parsing, with no input-library dependency |
-| `store.py` | `config.json`, `hotkeys.json` and `devices.json` |
-| `web/` | The phone app (`index.html`, `app.js`, `style.css`, manifest, icons) |
-| `tests/` | pytest suite |
-| `start.bat` | Runs the server in a console window |
-
-## About this copy
-
-A snapshot of the working repository, taken on 30 September 2026 after the security rework. Local configuration, paired devices, hotkey layouts, the startup task and personal network details are not included.
+| File            | Purpose                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| `server.py`     | HTTP and WebSocket server: host and origin checks, pairing, rate limits, command validation |
+| `controller.py` | Windows input: mouse, keyboard, volume, power                                               |
+| `keys.py`       | Hotkey parsing, with no input-library dependency                                            |
+| `store.py`      | `config.json`, `hotkeys.json` and `devices.json`                                            |
+| `web/`          | The phone app (`index.html`, `app.js`, `style.css`, manifest, icons)                        |
+| `tests/`        | pytest suite                                                                                |
+| `start.bat`     | Runs the server in a console window                                                         |

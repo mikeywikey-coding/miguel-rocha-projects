@@ -3,15 +3,8 @@
   "name": "Job Compass Companion",
   "version": "0.6.1",
   "description": "Capture job listings and fill reviewed application details. Never submits applications.",
-  "permissions": [
-    "activeTab",
-    "scripting",
-    "storage",
-    "alarms"
-  ],
-  "host_permissions": [
-    "http://127.0.0.1:8123/*"
-  ],
+  "permissions": ["activeTab", "scripting", "storage", "alarms"],
+  "host_permissions": ["http://127.0.0.1:8123/*"],
   "icons": {
     "16": "icon-16.png",
     "32": "icon-32.png",

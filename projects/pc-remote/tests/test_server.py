@@ -16,9 +16,17 @@ def pair(server, ip="192.168.1.20"):
 
 def test_requests_for_other_host_names_are_refused(server):
     # DNS rebinding: a hostile page points its own domain at this PC.
-    assert server.process_request(None, request(host="evil.example:8765")).status_code == 403
+    assert (
+        server.process_request(None, request(host="evil.example:8765")).status_code
+        == 403
+    )
     assert server.process_request(None, request(host=None)).status_code == 403
-    for host in ("mypc.local:8765", "192.168.1.10:8765", "[::1]:8765", "localhost:8765"):
+    for host in (
+        "mypc.local:8765",
+        "192.168.1.10:8765",
+        "[::1]:8765",
+        "localhost:8765",
+    ):
         assert server.process_request(None, request(host=host)).status_code == 200
 
 
@@ -32,7 +40,10 @@ def test_other_web_pages_cannot_open_the_socket(server):
     for origin in refused:
         response = server.process_request(None, request("/ws", origin=origin))
         assert response.status_code == 403, origin
-    assert server.process_request(None, request("/ws", origin="http://mypc.local:8765")) is None
+    assert (
+        server.process_request(None, request("/ws", origin="http://mypc.local:8765"))
+        is None
+    )
     assert server.process_request(None, request("/ws")) is None  # not a browser
 
 
@@ -73,7 +84,9 @@ def test_the_pin_pairs_a_phone_and_its_token_signs_it_in_later(server, isolated_
 
     socket = run(
         server,
-        FakeSocket([{"type": "auth", "token": token}, {"type": "key.tap", "keys": "ctrl+c"}]),
+        FakeSocket(
+            [{"type": "auth", "token": token}, {"type": "key.tap", "keys": "ctrl+c"}]
+        ),
     )
     assert socket.sent[0]["ok"] is True and "token" not in socket.sent[0]
     assert ("send_hotkey", ("ctrl+c",)) in server.controller.calls
@@ -91,7 +104,10 @@ def test_unknown_tokens_and_wrong_pins_are_refused(server):
 
 def test_a_phone_can_unpair_itself(server):
     token = pair(server)
-    socket = run(server, FakeSocket([{"type": "auth", "token": token}, {"type": "device.forget"}]))
+    socket = run(
+        server,
+        FakeSocket([{"type": "auth", "token": token}, {"type": "device.forget"}]),
+    )
     assert socket.sent[-1] == {"type": "forgotten"}
     again = run(server, FakeSocket([{"type": "auth", "token": token}]))
     assert again.sent == [{"type": "auth", "ok": False}]
@@ -131,7 +147,9 @@ def test_repeated_wrong_pins_lock_the_address_out(server):
 def test_ipv6_addresses_in_one_64_share_a_limit(server):
     for n in range(server.MAX_FAILED_ATTEMPTS):
         wrong_pin(server, f"2001:db8::{n + 1:x}")
-    fresh_address = run(server, FakeSocket([{"type": "auth", "pin": PIN}], ip="2001:db8::ffff"))
+    fresh_address = run(
+        server, FakeSocket([{"type": "auth", "pin": PIN}], ip="2001:db8::ffff")
+    )
     assert fresh_address.sent[0].get("locked") is True
     pair(server, ip="2001:db8:0:1::1")  # the neighbouring /64 is a different network
 
@@ -142,13 +160,17 @@ def test_the_global_limit_stops_pin_guessing_but_not_paired_phones(server):
         wrong_pin(server, f"10.0.{n}.1")  # one attempt each from many addresses
     guess = run(server, FakeSocket([{"type": "auth", "pin": PIN}], ip="10.9.9.9"))
     assert guess.sent[0].get("locked") is True
-    phone = run(server, FakeSocket([{"type": "auth", "token": token}], ip="192.168.1.6"))
+    phone = run(
+        server, FakeSocket([{"type": "auth", "token": token}], ip="192.168.1.6")
+    )
     assert phone.sent[0]["ok"] is True
 
 
 def test_lockouts_expire(server):
     now = [1000.0]
-    throttle = server.Throttle(per_address=2, overall=5, window=60, clock=lambda: now[0])
+    throttle = server.Throttle(
+        per_address=2, overall=5, window=60, clock=lambda: now[0]
+    )
     throttle.failed("192.168.1.40")
     throttle.failed("192.168.1.40")
     assert throttle.blocked("192.168.1.40", pairing=True)
@@ -177,7 +199,11 @@ def test_numbers_are_clamped_and_must_be_finite(server):
     assert ("click", ("left", 3)) in calls
     assert ("scroll", (0.0, -100.0)) in calls
     assert sum(1 for name, _ in calls if name == "move_mouse") == 1
-    assert socket.sent[-1] == {"type": "error", "message": "expected a number", "rid": 1}
+    assert socket.sent[-1] == {
+        "type": "error",
+        "message": "expected a number",
+        "rid": 1,
+    }
 
 
 def test_bad_commands_become_error_replies(server):
@@ -194,7 +220,9 @@ def test_bad_commands_become_error_replies(server):
         "unknown command: format.disk",
         "muted must be true, false or omitted",
     ]
-    assert not any(name in ("button_down", "type_text") for name, _ in server.controller.calls)
+    assert not any(
+        name in ("button_down", "type_text") for name, _ in server.controller.calls
+    )
 
 
 def test_unexpected_failures_do_not_leak_details(server, monkeypatch):

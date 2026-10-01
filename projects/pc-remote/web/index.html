@@ -1,275 +1,357 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<title>PC Remote</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="PC Remote">
-<meta name="theme-color" content="#F0EEE6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1B1A17" media="(prefers-color-scheme: dark)">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icon-180.png">
-<link rel="icon" href="/icon-192.png">
-<link rel="stylesheet" href="/style.css">
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <title>PC Remote</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="PC Remote" />
+    <meta name="theme-color" content="#F0EEE6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1B1A17" media="(prefers-color-scheme: dark)" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon-180.png" />
+    <link rel="icon" href="/icon-192.png" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <!-- Icon definitions, referenced with <use> throughout -->
+    <svg width="0" height="0" aria-hidden="true" style="position: absolute">
+      <defs>
+        <g id="i-pad">
+          <rect x="3" y="5" width="18" height="14" rx="2.5" />
+          <path d="M3 14.5h18" />
+        </g>
+        <g id="i-keys">
+          <rect x="2.5" y="6" width="19" height="12" rx="2" />
+          <path d="M6 9.5h.01M9.5 9.5h.01M13 9.5h.01M16.5 9.5h.01M8 13.5h8" />
+        </g>
+        <g id="i-bolt"><path d="M13 2.5 4.5 13.5H11l-.5 8L19 10.5h-6.5z" /></g>
+        <g id="i-speaker">
+          <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
+          <path d="M15.5 9a4 4 0 0 1 0 6" />
+          <path d="M18 6.5a7.5 7.5 0 0 1 0 11" />
+        </g>
+        <g id="i-muted">
+          <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
+          <path d="m16 9.5 5 5M21 9.5l-5 5" />
+        </g>
+        <g id="i-prev">
+          <path d="M18.5 5.5v13L9 12z" />
+          <path d="M6 5.5v13" />
+        </g>
+        <g id="i-next">
+          <path d="M5.5 5.5v13L15 12z" />
+          <path d="M18 5.5v13" />
+        </g>
+        <g id="i-playpause">
+          <path d="M3 5.5v13L12 12z" />
+          <path d="M16 5.5v13M21 5.5v13" />
+        </g>
+        <g id="i-signout">
+          <path d="M12 3v9" />
+          <path d="M6.8 6.4a8 8 0 1 0 10.4 0" />
+        </g>
+        <g id="i-cursor"><path d="M5 3v14.5l3.9-3.6 2.4 5.4 2.9-1.3-2.4-5.3 5.3-.4z" /></g>
+        <g id="i-scroll"><path d="M12 4.5 8.5 8.5h7zM12 19.5 8.5 15.5h7z" /></g>
+      </defs>
+    </svg>
 
-<!-- Icon definitions, referenced with <use> throughout -->
-<svg width="0" height="0" aria-hidden="true" style="position:absolute">
-  <defs>
-    <g id="i-pad"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 14.5h18"/></g>
-    <g id="i-keys"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 9.5h.01M9.5 9.5h.01M13 9.5h.01M16.5 9.5h.01M8 13.5h8"/></g>
-    <g id="i-bolt"><path d="M13 2.5 4.5 13.5H11l-.5 8L19 10.5h-6.5z"/></g>
-    <g id="i-speaker"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></g>
-    <g id="i-muted"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/></g>
-    <g id="i-prev"><path d="M18.5 5.5v13L9 12z"/><path d="M6 5.5v13"/></g>
-    <g id="i-next"><path d="M5.5 5.5v13L15 12z"/><path d="M18 5.5v13"/></g>
-    <g id="i-playpause"><path d="M3 5.5v13L12 12z"/><path d="M16 5.5v13M21 5.5v13"/></g>
-    <g id="i-signout"><path d="M12 3v9"/><path d="M6.8 6.4a8 8 0 1 0 10.4 0"/></g>
-    <g id="i-cursor"><path d="M5 3v14.5l3.9-3.6 2.4 5.4 2.9-1.3-2.4-5.3 5.3-.4z"/></g>
-    <g id="i-scroll"><path d="M12 4.5 8.5 8.5h7zM12 19.5 8.5 15.5h7z"/></g>
-  </defs>
-</svg>
-
-<!-- PIN gate -->
-<div id="pinScreen" class="pin-screen">
-  <div class="pin-card">
-    <div class="pin-mark">
-      <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-cursor"/></svg>
+    <!-- PIN gate -->
+    <div id="pinScreen" class="pin-screen">
+      <div class="pin-card">
+        <div class="pin-mark">
+          <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-cursor" /></svg>
+        </div>
+        <h1>PC Remote</h1>
+        <p id="pinHint">Enter the PIN shown in the server window.</p>
+        <input
+          id="pinInput"
+          type="tel"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="32"
+          placeholder="00000000"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+        />
+        <button id="pinSubmit" class="btn-primary">Connect</button>
+      </div>
     </div>
-    <h1>PC Remote</h1>
-    <p id="pinHint">Enter the PIN shown in the server window.</p>
-    <input id="pinInput" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="32"
-           placeholder="00000000" autocomplete="off" autocapitalize="off" spellcheck="false">
-    <button id="pinSubmit" class="btn-primary">Connect</button>
-  </div>
-</div>
 
-<!-- Main app -->
-<div id="app" class="app hidden">
+    <!-- Main app -->
+    <div id="app" class="app hidden">
+      <main class="views">
+        <!-- ── Touchpad ── -->
+        <section id="view-pad" class="view active">
+          <div class="type-box">
+            <input
+              class="type-field"
+              type="text"
+              placeholder="Type here — it goes straight to the PC"
+              autocomplete="off"
+              autocapitalize="sentences"
+              autocorrect="off"
+              spellcheck="false"
+            />
+          </div>
 
-  <main class="views">
+          <div class="pad-wrap">
+            <div id="trackpad" class="trackpad">
+              <span class="trackpad-hint"
+                >Drag to move · tap to click<br />Press and hold to grab · two fingers to
+                right-click or scroll</span
+              >
+            </div>
+            <div id="scrollStrip" class="scroll-strip" aria-label="Scroll">
+              <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-scroll" /></svg>
+            </div>
+          </div>
 
-    <!-- ── Touchpad ── -->
-    <section id="view-pad" class="view active">
-      <div class="type-box">
-        <input class="type-field" type="text" placeholder="Type here — it goes straight to the PC"
-               autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false">
-      </div>
+          <div class="click-row">
+            <button id="dragBtn" class="click-btn">Drag</button>
+            <button class="click-btn" data-click="middle">Middle</button>
+            <button class="click-btn" data-click="right">Right</button>
+          </div>
 
-      <div class="pad-wrap">
-        <div id="trackpad" class="trackpad">
-          <span class="trackpad-hint">Drag to move · tap to click<br>Press and hold to grab · two fingers to right-click or scroll</span>
-        </div>
-        <div id="scrollStrip" class="scroll-strip" aria-label="Scroll">
-          <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-scroll"/></svg>
-        </div>
-      </div>
+          <div class="fav-row">
+            <button class="fav-btn" data-hotkey="ctrl+c">
+              <span>Copy</span><small>ctrl+c</small>
+            </button>
+            <button class="fav-btn" data-hotkey="ctrl+v">
+              <span>Paste</span><small>ctrl+v</small>
+            </button>
+            <button class="fav-btn" data-hotkey="ctrl+z">
+              <span>Undo</span><small>ctrl+z</small>
+            </button>
+            <button class="fav-btn" data-hotkey="alt+tab">
+              <span>Alt+Tab</span><small>alt+tab</small>
+            </button>
+          </div>
 
-      <div class="click-row">
-        <button id="dragBtn" class="click-btn">Drag</button>
-        <button class="click-btn" data-click="middle">Middle</button>
-        <button class="click-btn" data-click="right">Right</button>
-      </div>
+          <div class="settings-row">
+            <label class="speed">
+              <span>Speed</span>
+              <input id="sensitivity" type="range" min="0.5" max="4" step="0.1" value="1.6" />
+            </label>
+            <label class="checkbox">
+              <input id="naturalScroll" type="checkbox" checked />
+              <span>Natural scroll</span>
+            </label>
+          </div>
+        </section>
 
-      <div class="fav-row">
-        <button class="fav-btn" data-hotkey="ctrl+c"><span>Copy</span><small>ctrl+c</small></button>
-        <button class="fav-btn" data-hotkey="ctrl+v"><span>Paste</span><small>ctrl+v</small></button>
-        <button class="fav-btn" data-hotkey="ctrl+z"><span>Undo</span><small>ctrl+z</small></button>
-        <button class="fav-btn" data-hotkey="alt+tab"><span>Alt+Tab</span><small>alt+tab</small></button>
-      </div>
+        <!-- ── Hotkeys ── -->
+        <section id="view-hotkeys" class="view">
+          <div class="page-tab-row">
+            <div class="page-tabs" id="pageTabs"></div>
+            <button id="editToggle" class="pill-btn">Edit</button>
+          </div>
+          <div class="hotkey-grid" id="hotkeyGrid"></div>
+          <div class="trackpad mini">
+            <span class="trackpad-hint">Drag to move · tap to click</span>
+          </div>
+        </section>
 
-      <div class="settings-row">
-        <label class="speed">
-          <span>Speed</span>
-          <input id="sensitivity" type="range" min="0.5" max="4" step="0.1" value="1.6">
-        </label>
-        <label class="checkbox">
-          <input id="naturalScroll" type="checkbox" checked>
-          <span>Natural scroll</span>
-        </label>
-      </div>
-    </section>
+        <!-- ── Keys ── -->
+        <section id="view-keys" class="view">
+          <div class="type-box">
+            <input
+              class="type-field"
+              type="text"
+              placeholder="Type here — it goes straight to the PC"
+              autocomplete="off"
+              autocapitalize="sentences"
+              autocorrect="off"
+              spellcheck="false"
+            />
+          </div>
 
-    <!-- ── Hotkeys ── -->
-    <section id="view-hotkeys" class="view">
-      <div class="page-tab-row">
-        <div class="page-tabs" id="pageTabs"></div>
-        <button id="editToggle" class="pill-btn">Edit</button>
-      </div>
-      <div class="hotkey-grid" id="hotkeyGrid"></div>
-      <div class="trackpad mini">
-        <span class="trackpad-hint">Drag to move · tap to click</span>
-      </div>
-    </section>
-
-    <!-- ── Keys ── -->
-    <section id="view-keys" class="view">
-      <div class="type-box">
-        <input class="type-field" type="text" placeholder="Type here — it goes straight to the PC"
-               autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false">
-      </div>
-
-      <!-- Laid out to echo a real keyboard: left column of anchors, the
+          <!-- Laid out to echo a real keyboard: left column of anchors, the
            main block's right-hand keys, then the nav cluster. -->
-      <div class="key-grid">
-        <button class="key" data-key="escape">Esc</button>
-        <button class="key" data-key="backspace">Backspace</button>
-        <button class="key" data-key="delete">Delete</button>
-        <button class="key" data-key="printscreen">PrtScn</button>
-        <button class="key" data-key="tab">Tab</button>
-        <button class="key" data-key="enter">Enter</button>
-        <button class="key" data-key="home">Home</button>
-        <button class="key" data-key="pageup">Page Up</button>
-        <button class="key" data-key="win">Win</button>
-        <button class="key" data-key="space">Space</button>
-        <button class="key" data-key="end">End</button>
-        <button class="key" data-key="pagedown">Page Dn</button>
-      </div>
-
-      <div class="fn-grid" id="fnGrid"></div>
-
-      <div class="arrows">
-        <button class="key arrow up" data-key="up" aria-label="Up">↑</button>
-        <button class="key arrow left" data-key="left" aria-label="Left">←</button>
-        <button class="key arrow down" data-key="down" aria-label="Down">↓</button>
-        <button class="key arrow right" data-key="right" aria-label="Right">→</button>
-      </div>
-
-      <div class="trackpad mini">
-        <span class="trackpad-hint">Drag to move · tap to click</span>
-      </div>
-    </section>
-
-    <!-- ── Media ── -->
-    <section id="view-media" class="view">
-      <section class="panel playback">
-        <h2 class="panel-title">Playback</h2>
-        <div class="media-row">
-          <button class="media-btn" data-media="prev" aria-label="Previous">
-            <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-prev"/></svg>
-          </button>
-          <button class="media-btn primary" data-media="play" aria-label="Play or pause">
-            <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-playpause"/></svg>
-          </button>
-          <button class="media-btn" data-media="next" aria-label="Next">
-            <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-next"/></svg>
-          </button>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2 class="panel-title">Volume</h2>
-        <div class="vol-head">
-          <button id="muteBtn" class="icon-btn" aria-label="Mute">
-            <svg viewBox="0 0 24 24" class="ico when-live"><use href="#i-speaker"/></svg>
-            <svg viewBox="0 0 24 24" class="ico when-muted"><use href="#i-muted"/></svg>
-          </button>
-          <span id="volLabel" class="vol-label">—</span>
-        </div>
-        <input id="volSlider" class="vol-slider" type="range" min="0" max="100" step="1" value="0" aria-label="Volume">
-        <div class="vol-steps">
-          <button class="btn-quiet" data-volstep="-5">−5</button>
-          <button class="btn-quiet" data-volstep="5">+5</button>
-        </div>
-      </section>
-
-      <section class="panel power">
-        <h2 class="panel-title">Power</h2>
-        <div class="power-rows">
-          <div class="power-row">
-            <button class="power-btn" data-power="lock">Lock</button>
-            <button class="power-btn" data-power="sleep">Sleep</button>
-            <button class="power-btn" data-power="signout">Sign out</button>
+          <div class="key-grid">
+            <button class="key" data-key="escape">Esc</button>
+            <button class="key" data-key="backspace">Backspace</button>
+            <button class="key" data-key="delete">Delete</button>
+            <button class="key" data-key="printscreen">PrtScn</button>
+            <button class="key" data-key="tab">Tab</button>
+            <button class="key" data-key="enter">Enter</button>
+            <button class="key" data-key="home">Home</button>
+            <button class="key" data-key="pageup">Page Up</button>
+            <button class="key" data-key="win">Win</button>
+            <button class="key" data-key="space">Space</button>
+            <button class="key" data-key="end">End</button>
+            <button class="key" data-key="pagedown">Page Dn</button>
           </div>
-          <div class="power-row">
-            <button class="power-btn danger" data-power="restart">Restart</button>
-            <button class="power-btn danger" data-power="shutdown">Shut down</button>
+
+          <div class="fn-grid" id="fnGrid"></div>
+
+          <div class="arrows">
+            <button class="key arrow up" data-key="up" aria-label="Up">↑</button>
+            <button class="key arrow left" data-key="left" aria-label="Left">←</button>
+            <button class="key arrow down" data-key="down" aria-label="Down">↓</button>
+            <button class="key arrow right" data-key="right" aria-label="Right">→</button>
           </div>
+
+          <div class="trackpad mini">
+            <span class="trackpad-hint">Drag to move · tap to click</span>
+          </div>
+        </section>
+
+        <!-- ── Media ── -->
+        <section id="view-media" class="view">
+          <section class="panel playback">
+            <h2 class="panel-title">Playback</h2>
+            <div class="media-row">
+              <button class="media-btn" data-media="prev" aria-label="Previous">
+                <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-prev" /></svg>
+              </button>
+              <button class="media-btn primary" data-media="play" aria-label="Play or pause">
+                <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-playpause" /></svg>
+              </button>
+              <button class="media-btn" data-media="next" aria-label="Next">
+                <svg viewBox="0 0 24 24" class="ico solid"><use href="#i-next" /></svg>
+              </button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2 class="panel-title">Volume</h2>
+            <div class="vol-head">
+              <button id="muteBtn" class="icon-btn" aria-label="Mute">
+                <svg viewBox="0 0 24 24" class="ico when-live"><use href="#i-speaker" /></svg>
+                <svg viewBox="0 0 24 24" class="ico when-muted"><use href="#i-muted" /></svg>
+              </button>
+              <span id="volLabel" class="vol-label">—</span>
+            </div>
+            <input
+              id="volSlider"
+              class="vol-slider"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value="0"
+              aria-label="Volume"
+            />
+            <div class="vol-steps">
+              <button class="btn-quiet" data-volstep="-5">−5</button>
+              <button class="btn-quiet" data-volstep="5">+5</button>
+            </div>
+          </section>
+
+          <section class="panel power">
+            <h2 class="panel-title">Power</h2>
+            <div class="power-rows">
+              <div class="power-row">
+                <button class="power-btn" data-power="lock">Lock</button>
+                <button class="power-btn" data-power="sleep">Sleep</button>
+                <button class="power-btn" data-power="signout">Sign out</button>
+              </div>
+              <div class="power-row">
+                <button class="power-btn danger" data-power="restart">Restart</button>
+                <button class="power-btn danger" data-power="shutdown">Shut down</button>
+              </div>
+            </div>
+            <button id="forgetPin" class="btn-quiet disconnect">Disconnect remote</button>
+          </section>
+        </section>
+      </main>
+
+      <nav class="tabbar">
+        <button class="tab active" data-view="pad">
+          <svg viewBox="0 0 24 24" class="ico"><use href="#i-pad" /></svg>Touchpad
+        </button>
+        <button class="tab" data-view="hotkeys">
+          <svg viewBox="0 0 24 24" class="ico"><use href="#i-bolt" /></svg>Hotkeys
+        </button>
+        <button class="tab" data-view="keys">
+          <svg viewBox="0 0 24 24" class="ico"><use href="#i-keys" /></svg>Keys
+        </button>
+        <button class="tab" data-view="media">
+          <svg viewBox="0 0 24 24" class="ico"><use href="#i-speaker" /></svg>Media
+        </button>
+      </nav>
+    </div>
+
+    <!-- Edit sheet -->
+    <div id="sheet" class="sheet hidden">
+      <div class="sheet-panel">
+        <h2 id="sheetTitle">Edit button</h2>
+
+        <label class="field">
+          <span class="field-label">Label</span>
+          <input
+            id="sheetLabel"
+            type="text"
+            maxlength="24"
+            placeholder="Copy"
+            autocapitalize="words"
+          />
+        </label>
+
+        <div id="sheetKeysWrap" class="field-stack">
+          <span class="field-label">Modifiers</span>
+          <div class="mod-row" id="sheetMods">
+            <button class="mod" data-mod="ctrl">Ctrl</button>
+            <button class="mod" data-mod="shift">Shift</button>
+            <button class="mod" data-mod="alt">Alt</button>
+            <button class="mod" data-mod="win">Win</button>
+          </div>
+
+          <label class="field">
+            <span class="field-label">Key</span>
+            <input
+              id="sheetKey"
+              type="text"
+              list="keyOptions"
+              maxlength="16"
+              placeholder="c"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+            />
+          </label>
+          <datalist id="keyOptions"></datalist>
+
+          <p class="preview">Sends <code id="sheetPreview">—</code></p>
         </div>
-        <button id="forgetPin" class="btn-quiet disconnect">Disconnect remote</button>
-      </section>
-    </section>
 
-  </main>
-
-  <nav class="tabbar">
-    <button class="tab active" data-view="pad">
-      <svg viewBox="0 0 24 24" class="ico"><use href="#i-pad"/></svg>Touchpad
-    </button>
-    <button class="tab" data-view="hotkeys">
-      <svg viewBox="0 0 24 24" class="ico"><use href="#i-bolt"/></svg>Hotkeys
-    </button>
-    <button class="tab" data-view="keys">
-      <svg viewBox="0 0 24 24" class="ico"><use href="#i-keys"/></svg>Keys
-    </button>
-    <button class="tab" data-view="media">
-      <svg viewBox="0 0 24 24" class="ico"><use href="#i-speaker"/></svg>Media
-    </button>
-  </nav>
-</div>
-
-<!-- Edit sheet -->
-<div id="sheet" class="sheet hidden">
-  <div class="sheet-panel">
-    <h2 id="sheetTitle">Edit button</h2>
-
-    <label class="field">
-      <span class="field-label">Label</span>
-      <input id="sheetLabel" type="text" maxlength="24" placeholder="Copy" autocapitalize="words">
-    </label>
-
-    <div id="sheetKeysWrap" class="field-stack">
-      <span class="field-label">Modifiers</span>
-      <div class="mod-row" id="sheetMods">
-        <button class="mod" data-mod="ctrl">Ctrl</button>
-        <button class="mod" data-mod="shift">Shift</button>
-        <button class="mod" data-mod="alt">Alt</button>
-        <button class="mod" data-mod="win">Win</button>
+        <div class="sheet-actions">
+          <button id="sheetDelete" class="btn-danger">Delete</button>
+          <button id="sheetCancel" class="btn-quiet">Cancel</button>
+          <button id="sheetSave" class="btn-primary">Save</button>
+        </div>
       </div>
-
-      <label class="field">
-        <span class="field-label">Key</span>
-        <input id="sheetKey" type="text" list="keyOptions" maxlength="16" placeholder="c"
-               autocapitalize="off" autocorrect="off" spellcheck="false">
-      </label>
-      <datalist id="keyOptions"></datalist>
-
-      <p class="preview">Sends <code id="sheetPreview">—</code></p>
     </div>
 
-    <div class="sheet-actions">
-      <button id="sheetDelete" class="btn-danger">Delete</button>
-      <button id="sheetCancel" class="btn-quiet">Cancel</button>
-      <button id="sheetSave" class="btn-primary">Save</button>
+    <!-- Alt+Tab switcher: Alt stays held on the PC while this is open -->
+    <div id="switcher" class="sheet hidden">
+      <div class="sheet-panel">
+        <h2>Alt+Tab</h2>
+        <p class="preview">
+          Alt is held on the PC, so the window list stays up. Step through it, then pick one.
+        </p>
+
+        <div class="switch-row">
+          <button id="switchPrev" class="switch-btn">◀&nbsp; Prev</button>
+          <button id="switchNext" class="switch-btn">Next &nbsp;▶</button>
+        </div>
+
+        <div class="sheet-actions">
+          <button id="switchCancel" class="btn-quiet">Cancel</button>
+          <button id="switchPick" class="btn-primary">Select window</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<!-- Alt+Tab switcher: Alt stays held on the PC while this is open -->
-<div id="switcher" class="sheet hidden">
-  <div class="sheet-panel">
-    <h2>Alt+Tab</h2>
-    <p class="preview">Alt is held on the PC, so the window list stays up. Step
-      through it, then pick one.</p>
+    <div id="toast" class="toast"></div>
 
-    <div class="switch-row">
-      <button id="switchPrev" class="switch-btn">◀&nbsp; Prev</button>
-      <button id="switchNext" class="switch-btn">Next &nbsp;▶</button>
-    </div>
-
-    <div class="sheet-actions">
-      <button id="switchCancel" class="btn-quiet">Cancel</button>
-      <button id="switchPick" class="btn-primary">Select window</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast" class="toast"></div>
-
-<script src="/app.js"></script>
-</body>
+    <script src="/app.js"></script>
+  </body>
 </html>

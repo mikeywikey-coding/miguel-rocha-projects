@@ -16,6 +16,7 @@ these checks (README.md, "Security", explains the reasoning):
   address) and across all addresses.
 * Every command is validated and clamped before it reaches the controller.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -81,7 +82,9 @@ def configure(config: dict) -> None:
     PORT = int(config["port"])
     _extra_hosts.clear()
     _extra_hosts.update(
-        str(name).strip().lower() for name in config.get("allowed_hosts", []) if str(name).strip()
+        str(name).strip().lower()
+        for name in config.get("allowed_hosts", [])
+        if str(name).strip()
     )
     _known_hosts.clear()
     _hosts_read_at = 0.0
@@ -219,7 +222,11 @@ def origin_allowed(origin: str | None, host: str | None) -> bool:
 
 def _http_response(status: HTTPStatus, body: bytes, content_type: str) -> Response:
     headers = Headers(
-        {"Content-Type": content_type, "Content-Length": str(len(body)), **SECURITY_HEADERS}
+        {
+            "Content-Type": content_type,
+            "Content-Length": str(len(body)),
+            **SECURITY_HEADERS,
+        }
     )
     return Response(status.value, status.phrase, headers, body)
 
@@ -237,7 +244,9 @@ def process_request(connection, request):
     path = request.path.split("?", 1)[0]
     if path == "/ws":
         if not origin_allowed(request.headers.get("Origin"), host):
-            return _refuse_request(HTTPStatus.FORBIDDEN, "Cross-origin connection refused")
+            return _refuse_request(
+                HTTPStatus.FORBIDDEN, "Cross-origin connection refused"
+            )
         return None
 
     relative = "index.html" if path in ("/", "") else path.lstrip("/")
@@ -411,16 +420,20 @@ def dispatch(command: dict) -> dict | None:
 
     if kind == "mouse.move":
         controller.move_mouse(
-            _number(command.get("dx"), -2000, 2000, 0), _number(command.get("dy"), -2000, 2000, 0)
+            _number(command.get("dx"), -2000, 2000, 0),
+            _number(command.get("dy"), -2000, 2000, 0),
         )
         return None
     if kind == "mouse.scroll":
         controller.scroll(
-            _number(command.get("dx"), -100, 100, 0), _number(command.get("dy"), -100, 100, 0)
+            _number(command.get("dx"), -100, 100, 0),
+            _number(command.get("dy"), -100, 100, 0),
         )
         return None
     if kind == "mouse.click":
-        controller.click(_button(command.get("button")), int(_number(command.get("count"), 1, 3, 1)))
+        controller.click(
+            _button(command.get("button")), int(_number(command.get("count"), 1, 3, 1))
+        )
         return None
     if kind == "mouse.down":
         controller.button_down(_button(command.get("button")))
@@ -445,7 +458,10 @@ def dispatch(command: dict) -> dict | None:
     if kind == "volume.get":
         return {"type": "volume", "volume": controller.get_volume()}
     if kind == "volume.set":
-        return {"type": "volume", "volume": controller.set_volume(_number(command.get("level"), 0, 100))}
+        return {
+            "type": "volume",
+            "volume": controller.set_volume(_number(command.get("level"), 0, 100)),
+        }
     if kind == "volume.mute":
         muted = command.get("muted")
         if muted is not None and not isinstance(muted, bool):
@@ -490,7 +506,9 @@ async def _refuse(websocket, locked: bool = False) -> None:
         reply["locked"] = True
     try:
         await websocket.send(json.dumps(reply))
-        await websocket.close(4429 if locked else 4401, "too many attempts" if locked else "refused")
+        await websocket.close(
+            4429 if locked else 4401, "too many attempts" if locked else "refused"
+        )
     except ConnectionClosed:
         pass
 
@@ -600,7 +618,11 @@ async def _serve(websocket) -> None:
             reply = {"type": "error", "message": "command failed"}
         if reply is not None:
             rid = command.get("rid")
-            if isinstance(rid, (int, str)) and not isinstance(rid, bool) and len(str(rid)) <= 32:
+            if (
+                isinstance(rid, (int, str))
+                and not isinstance(rid, bool)
+                and len(str(rid)) <= 32
+            ):
                 reply["rid"] = rid
             await websocket.send(json.dumps(reply))
 

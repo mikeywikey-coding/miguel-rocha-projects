@@ -1,12 +1,9 @@
 /**
- * TRAVIAN WATCHMAN PRO - BACKGROUND SCRIPT
- * Version: 6.0 (MV3 Service Worker — audio via Offscreen API)
+ * TravAlarm: background script
  *
  * Audio playback is handled by offscreen.js via the Chrome Offscreen API.
  * The offscreen document receives PLAY_SOUND / STOP_SOUND / SET_VOLUME messages.
  */
-
-/* global chrome */
 
 let alarms = [];
 const DEFAULT_SOUND_CATEGORIES = {
@@ -36,9 +33,7 @@ let _stateLoaded = false;
  * dismissals don't pollute the set with hundreds of impact-keyed entries.
  */
 function getSirenKey(alarmName) {
-  const match = alarmName.match(
-    /Attack on (.+?)(?:\s+@\s+\d|\s*\(|\s*\[)/,
-  );
+  const match = alarmName.match(/Attack on (.+?)(?:\s+@\s+\d|\s*\(|\s*\[)/);
   return match ? `SIREN_${match[1].trim()}` : alarmName;
 }
 
@@ -138,8 +133,7 @@ function schedulePreciseTick() {
 // AUDIO DELEGATION (via Offscreen API)
 // ==========================================
 
-const generateId = () =>
-  Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const generateId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
 async function ensureOffscreen() {
   try {
@@ -155,8 +149,7 @@ async function ensureOffscreen() {
 
 function classifyAlarmCategory(a) {
   const n = a.name || "";
-  if (a.customType === "attack" || n.includes("🚨") || n.includes("⚠️"))
-    return "attack";
+  if (a.customType === "attack" || n.includes("🚨") || n.includes("⚠️")) return "attack";
   if (n.includes("⚔️")) return "hero";
   if (n.includes("🎓")) return "training";
   if (n.includes("🎉")) return "culture";
@@ -268,16 +261,10 @@ function runAlarmTick() {
   let triggerSound = false;
   let soundType = "normal";
 
-  const specialRegex = /[⭐⚔️⚠️🌾🎉🪵🧱🔩📦🎓]/;
-
   // Auto-delete expired ⚠️ attack tracker alarms (attack already landed)
   const expiredTrackers = [];
   alarms.forEach((a) => {
-    if (
-      a.customType === "attack" &&
-      a.name.includes("⚠️") &&
-      now >= a.scheduledTime
-    ) {
+    if (a.customType === "attack" && a.name.includes("⚠️") && now >= a.scheduledTime) {
       expiredTrackers.push(a.id);
     }
   });
@@ -290,9 +277,7 @@ function runAlarmTick() {
       (a) => a.customType === "attack" && a.name.includes("⚠️"),
     );
     if (!hasActiveTrackers) {
-      alarms = alarms.filter(
-        (a) => !(a.customType === "attack" && a.name.includes("🚨")),
-      );
+      alarms = alarms.filter((a) => !(a.customType === "attack" && a.name.includes("🚨")));
       ignoredAttacks.clear(); // No active attacks → safe to reset
     }
   }
@@ -301,9 +286,7 @@ function runAlarmTick() {
   // with no corresponding ⚠️ tracker. This catches the case where the rally
   // point fetch failed and no tracker was ever created — without this, the
   // siren would persist in storage and re-trigger the attack sound indefinitely.
-  const hasAnyTrackers = alarms.some(
-    (a) => a.customType === "attack" && a.name.includes("⚠️"),
-  );
+  const hasAnyTrackers = alarms.some((a) => a.customType === "attack" && a.name.includes("⚠️"));
   if (!hasAnyTrackers) {
     const ORPHAN_THRESHOLD_MS = 60000; // 60s grace period for fetch to complete
     const orphanedSirens = alarms.filter(
@@ -346,22 +329,13 @@ function runAlarmTick() {
       // follow-up `💥 Attack Landing` alarm scheduled for the actual impact
       // time (20s out), and drop the detection siren for this wave — it's
       // served its purpose.
-      if (
-        justFired &&
-        thisAlarmIsAttack &&
-        a.name.startsWith("⚠️ Attack Imminent:")
-      ) {
+      if (justFired && thisAlarmIsAttack && a.name.startsWith("⚠️ Attack Imminent:")) {
         const im = a.name.match(/ @ (\d{2}):(\d{2}):(\d{2})/);
         const tagMatch = a.name.match(/\[[^\]]+\]\s*$/);
         const hm = a.name.match(/^⚠️ Attack Imminent: (.+?) @ /);
         if (im && hm) {
           const impactDate = new Date(now);
-          impactDate.setHours(
-            parseInt(im[1], 10),
-            parseInt(im[2], 10),
-            parseInt(im[3], 10),
-            0,
-          );
+          impactDate.setHours(parseInt(im[1], 10), parseInt(im[2], 10), parseInt(im[3], 10), 0);
           if (impactDate.getTime() < now - 3600 * 1000) {
             impactDate.setDate(impactDate.getDate() + 1);
           }
@@ -495,223 +469,209 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           const newScheduledTime = now + delay;
 
           if (newB.customType === "attack") {
-          if (ignoredAttacks.has(getSirenKey(newB.name))) return;
-          // Tracker names embed a `(detected HH:MM)` timestamp captured at
-          // first sighting. Exact-name match would treat every page refresh
-          // as a fresh attack. Match trackers by their stable prefix
-          // (`⚠️ <headline>`) instead; sirens (🚨) and other attack alarms
-          // continue to use exact-name match.
-          const isTracker = newB.name.startsWith("⚠️ ");
-          const isSiren = newB.name.startsWith("🚨 ");
-          // Tracker names embed `@ HH:MM:SS` (absolute impact time). Parse
-          // that to dedup across refreshes — `scheduledTime` drifts when the
-          // 20s dodge-lead clamps near impact, but impact time is stable.
-          const parseImpactMs = (name) => {
-            const m = name && name.match(/ @ (\d{2}):(\d{2}):(\d{2})/);
-            if (!m) return null;
-            const now = new Date();
-            const t = new Date(now);
-            t.setHours(parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10), 0);
-            if (t.getTime() < now.getTime() - 3600 * 1000) {
-              t.setDate(t.getDate() + 1);
+            if (ignoredAttacks.has(getSirenKey(newB.name))) return;
+            // Tracker names embed a `(detected HH:MM)` timestamp captured at
+            // first sighting. Exact-name match would treat every page refresh
+            // as a fresh attack. Match trackers by their stable prefix
+            // (`⚠️ <headline>`) instead; sirens (🚨) and other attack alarms
+            // continue to use exact-name match.
+            const isTracker = newB.name.startsWith("⚠️ ");
+            const isSiren = newB.name.startsWith("🚨 ");
+            // Tracker names embed `@ HH:MM:SS` (absolute impact time). Parse
+            // that to dedup across refreshes — `scheduledTime` drifts when the
+            // 20s dodge-lead clamps near impact, but impact time is stable.
+            const parseImpactMs = (name) => {
+              const m = name && name.match(/ @ (\d{2}):(\d{2}):(\d{2})/);
+              if (!m) return null;
+              const now = new Date();
+              const t = new Date(now);
+              t.setHours(parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10), 0);
+              if (t.getTime() < now.getTime() - 3600 * 1000) {
+                t.setDate(t.getDate() + 1);
+              }
+              return t.getTime();
+            };
+            let headlineOnly = null;
+            if (isTracker) {
+              const m = newB.name.match(/^(⚠️ .+?)(?:\s\(wave\s×\d+\))?\s@\s/);
+              headlineOnly = m ? `${m[1]} ` : null;
             }
-            return t.getTime();
-          };
-          let headlineOnly = null;
-          if (isTracker) {
-            const m = newB.name.match(/^(⚠️ .+?)(?:\s\(wave\s×\d+\))?\s@\s/);
-            headlineOnly = m ? `${m[1]} ` : null;
-          }
-          // Sirens, like trackers, embed `@ HH:MM:SS`. Two fetches a moment
-          // apart can round the same wave's impact to adjacent seconds (e.g.
-          // 15:03:20 vs 15:03:21), so match sirens by their `🚨 Attack on
-          // <village> @` prefix + impact tolerance instead of exact name —
-          // otherwise that 1s drift spawns a duplicate siren.
-          let sirenPrefix = null;
-          if (isSiren) {
-            const m = newB.name.match(/^(🚨 Attack on .+?) @ /);
-            sirenPrefix = m ? `${m[1]} @ ` : null;
-          }
-          const newImpactMs =
-            isTracker || isSiren ? parseImpactMs(newB.name) : null;
-          // Tight 2s tolerance — keeps 1-3s-apart attacks as distinct
-          // alarms while still merging re-detections of the same attack
-          // across refreshes (which drift <1s between fetches).
-          const ATTACK_DEDUP_TOLERANCE_MS = 2000;
-          const existingAttack = alarms.find((a) => {
-            if (a.customType !== "attack") return a.name === newB.name;
+            // Sirens, like trackers, embed `@ HH:MM:SS`. Two fetches a moment
+            // apart can round the same wave's impact to adjacent seconds (e.g.
+            // 15:03:20 vs 15:03:21), so match sirens by their `🚨 Attack on
+            // <village> @` prefix + impact tolerance instead of exact name —
+            // otherwise that 1s drift spawns a duplicate siren.
+            let sirenPrefix = null;
             if (isSiren) {
-              if (!sirenPrefix || !a.name.startsWith(sirenPrefix)) return false;
+              const m = newB.name.match(/^(🚨 Attack on .+?) @ /);
+              sirenPrefix = m ? `${m[1]} @ ` : null;
+            }
+            const newImpactMs = isTracker || isSiren ? parseImpactMs(newB.name) : null;
+            // Tight 2s tolerance — keeps 1-3s-apart attacks as distinct
+            // alarms while still merging re-detections of the same attack
+            // across refreshes (which drift <1s between fetches).
+            const ATTACK_DEDUP_TOLERANCE_MS = 2000;
+            const existingAttack = alarms.find((a) => {
+              if (a.customType !== "attack") return a.name === newB.name;
+              if (isSiren) {
+                if (!sirenPrefix || !a.name.startsWith(sirenPrefix)) return false;
+                const existingImpact = parseImpactMs(a.name);
+                if (existingImpact != null && newImpactMs != null) {
+                  return Math.abs(existingImpact - newImpactMs) < ATTACK_DEDUP_TOLERANCE_MS;
+                }
+                return a.name === newB.name;
+              }
+              if (!isTracker) return a.name === newB.name;
+              if (!headlineOnly || !a.name.startsWith(headlineOnly)) return false;
               const existingImpact = parseImpactMs(a.name);
               if (existingImpact != null && newImpactMs != null) {
-                return (
-                  Math.abs(existingImpact - newImpactMs) <
-                  ATTACK_DEDUP_TOLERANCE_MS
-                );
+                return Math.abs(existingImpact - newImpactMs) < ATTACK_DEDUP_TOLERANCE_MS;
               }
-              return a.name === newB.name;
-            }
-            if (!isTracker) return a.name === newB.name;
-            if (!headlineOnly || !a.name.startsWith(headlineOnly)) return false;
-            const existingImpact = parseImpactMs(a.name);
-            if (existingImpact != null && newImpactMs != null) {
               return (
-                Math.abs(existingImpact - newImpactMs) <
-                ATTACK_DEDUP_TOLERANCE_MS
+                Math.abs((a.scheduledTime || 0) - newScheduledTime) < ATTACK_DEDUP_TOLERANCE_MS
               );
-            }
-            return (
-              Math.abs((a.scheduledTime || 0) - newScheduledTime) <
-              ATTACK_DEDUP_TOLERANCE_MS
-            );
-          });
-          if (existingAttack) {
-            // UI cards are keyed by name; we normally skip name updates so
-            // transit/detected drift doesn't change the uid every refresh and
-            // wipe the user's scroll position. EXCEPTION: wave-count changes
-            // (a second attack just joined the wave) ARE worth showing —
-            // patch only the `(wave ×N)` segment in place, leaving the rest
-            // of the name (and the uid that depends on it) untouched if N
-            // matches.
-            if (isTracker) {
-              const oldM = existingAttack.name.match(/\(wave\s×(\d+)\)/);
-              const newM = newB.name.match(/\(wave\s×(\d+)\)/);
-              const oldN = oldM ? parseInt(oldM[1], 10) : 1;
-              const newN = newM ? parseInt(newM[1], 10) : 1;
-              if (newN !== oldN) {
-                existingAttack.name = newB.name;
+            });
+            if (existingAttack) {
+              // UI cards are keyed by name; we normally skip name updates so
+              // transit/detected drift doesn't change the uid every refresh and
+              // wipe the user's scroll position. EXCEPTION: wave-count changes
+              // (a second attack just joined the wave) ARE worth showing —
+              // patch only the `(wave ×N)` segment in place, leaving the rest
+              // of the name (and the uid that depends on it) untouched if N
+              // matches.
+              if (isTracker) {
+                const oldM = existingAttack.name.match(/\(wave\s×(\d+)\)/);
+                const newM = newB.name.match(/\(wave\s×(\d+)\)/);
+                const oldN = oldM ? parseInt(oldM[1], 10) : 1;
+                const newN = newM ? parseInt(newM[1], 10) : 1;
+                if (newN !== oldN) {
+                  existingAttack.name = newB.name;
+                }
               }
-            }
-            const movedEarlier =
-              newScheduledTime < existingAttack.scheduledTime - 2000;
-            if (isSiren) {
-              // Sirens fire exactly once per wave. Leave them alone on
-              // refresh — same `scheduledTime`, same `notified` state.
+              const movedEarlier = newScheduledTime < existingAttack.scheduledTime - 2000;
+              if (isSiren) {
+                // Sirens fire exactly once per wave. Leave them alone on
+                // refresh — same `scheduledTime`, same `notified` state.
+                return;
+              }
+              if (existingAttack.notified) {
+                // Tracker already fired. Drift forward (from leadDelay clamping
+                // in the 20s window) shouldn't re-alarm. Only re-arm if the new
+                // schedule is GENUINELY earlier — a real new threat.
+                if (movedEarlier && !existingAttack.silenced) {
+                  existingAttack.scheduledTime = newScheduledTime;
+                  existingAttack.notified = false;
+                }
+                return;
+              }
+              // Not yet fired — keep schedule accurate.
+              existingAttack.scheduledTime = newScheduledTime;
               return;
             }
-            if (existingAttack.notified) {
-              // Tracker already fired. Drift forward (from leadDelay clamping
-              // in the 20s window) shouldn't re-alarm. Only re-arm if the new
-              // schedule is GENUINELY earlier — a real new threat.
-              if (movedEarlier && !existingAttack.silenced) {
-                existingAttack.scheduledTime = newScheduledTime;
-                existingAttack.notified = false;
-              }
-              return;
-            }
-            // Not yet fired — keep schedule accurate.
-            existingAttack.scheduledTime = newScheduledTime;
-            return;
           }
-        }
 
-        // For refreshable types, update an existing alarm in-place rather than creating a duplicate.
-        // resource/storage: skip update if silenced and already past due (user dismissed it).
-        // culture: update time but keep silenced state (no auto-un-silence on cultural alarms).
-        const refreshTypes = [
-          "training",
-          "settler",
-          "resource",
-          "storage",
-          "culture",
-          "farmlist",
-          "daily",
-          "hero",
-        ];
-        if (refreshTypes.includes(newB.customType)) {
-          let existing;
-          if (newB.customType === "hero") {
-            // Hero has one state at a time per server — match by customType + serverTag
-            // so status transitions (e.g. "Going to Oasis" → "Returning") reuse the
-            // same alarm record instead of accumulating stale expired duplicates.
-            const newServerTag = newB.name.split(" ").pop();
-            existing = alarms.find(
-              (a) => a.customType === "hero" && a.name.endsWith(newServerTag),
-            );
-          } else {
-            existing = alarms.find((a) => a.name === newB.name);
-          }
-          if (existing) {
-            if (newB.customType === "farmlist" || newB.customType === "daily") {
+          // For refreshable types, update an existing alarm in-place rather than creating a duplicate.
+          // resource/storage: skip update if silenced and already past due (user dismissed it).
+          // culture: update time but keep silenced state (no auto-un-silence on cultural alarms).
+          const refreshTypes = [
+            "training",
+            "settler",
+            "resource",
+            "storage",
+            "culture",
+            "farmlist",
+            "daily",
+            "hero",
+          ];
+          if (refreshTypes.includes(newB.customType)) {
+            let existing;
+            if (newB.customType === "hero") {
+              // Hero has one state at a time per server — match by customType + serverTag
+              // so status transitions (e.g. "Going to Oasis" → "Returning") reuse the
+              // same alarm record instead of accumulating stale expired duplicates.
+              const newServerTag = newB.name.split(" ").pop();
+              existing = alarms.find(
+                (a) => a.customType === "hero" && a.name.endsWith(newServerTag),
+              );
+            } else {
+              existing = alarms.find((a) => a.name === newB.name);
+            }
+            if (existing) {
+              if (newB.customType === "farmlist" || newB.customType === "daily") {
+                existing.scheduledTime = newScheduledTime;
+                existing.notified = false;
+                existing.silenced = false;
+                return;
+              }
+
+              if (newB.customType === "hero") {
+                existing.name = newB.name;
+                existing.noSound = newB.noSound || false;
+              }
               existing.scheduledTime = newScheduledTime;
               existing.notified = false;
-              existing.silenced = false;
+              if (newB.customType !== "culture") existing.silenced = false;
               return;
             }
-
-            if (newB.customType === "hero") {
-              existing.name = newB.name;
-              existing.noSound = newB.noSound || false;
-            }
-            existing.scheduledTime = newScheduledTime;
-            existing.notified = false;
-            if (newB.customType !== "culture") existing.silenced = false;
-            return;
           }
-        }
 
-        const isDuplicate = alarms.some(
-          (a) =>
-            a.name === newB.name &&
-            Math.abs(a.scheduledTime - newScheduledTime) <
-              DUPLICATE_THRESHOLD_MS,
-        );
-        if (!isDuplicate) {
-          const isHero = newB.name.includes("⚔️");
-          if (isHero) {
-            const serverTag = newB.name.split(" ").pop();
-            const idx = alarms.findIndex(
-              (a) =>
-                a.name.includes("⚔️") &&
-                a.name.endsWith(serverTag) &&
-                a.scheduledTime <= now,
-            );
-            if (idx !== -1) alarms.splice(idx, 1);
-          } else if (newB.customType == null) {
-            const buildingTagMatch = newB.name.match(
-              /\((.+)\)\s*(\[[^\]]+\])$/,
-            );
-            if (buildingTagMatch) {
-              const villagePart = buildingTagMatch[1];
-              const serverTagPart = buildingTagMatch[2];
-              // Strip the `#N` disambiguator the scanner appends to buildings
-              // queued at the same time, leaving the base
-              // "<name> lvl <n> (village) [tag]" identity. Alarms that share
-              // this identity are distinct completions of the same upgrade on
-              // different fields (e.g. leveling crops one-by-one) — keep them
-              // until the user clears them, instead of letting a new same-named
-              // build evict the earlier one.
-              const baseId = (n) => n.replace(/ #\d+$/, "");
-              const newBaseId = baseId(newB.name);
-              for (let i = alarms.length - 1; i >= 0; i--) {
-                const a = alarms[i];
-                if (
-                  a.customType == null &&
-                  !a.name.includes("⚔️") &&
-                  !a.isPinned &&
-                  baseId(a.name) !== newBaseId &&
-                  a.name.includes(`(${villagePart})`) &&
-                  a.name.includes(serverTagPart) &&
-                  (a.scheduledTime <= now || a.silenced === true)
-                ) {
-                  alarms.splice(i, 1);
+          const isDuplicate = alarms.some(
+            (a) =>
+              a.name === newB.name &&
+              Math.abs(a.scheduledTime - newScheduledTime) < DUPLICATE_THRESHOLD_MS,
+          );
+          if (!isDuplicate) {
+            const isHero = newB.name.includes("⚔️");
+            if (isHero) {
+              const serverTag = newB.name.split(" ").pop();
+              const idx = alarms.findIndex(
+                (a) =>
+                  a.name.includes("⚔️") && a.name.endsWith(serverTag) && a.scheduledTime <= now,
+              );
+              if (idx !== -1) alarms.splice(idx, 1);
+            } else if (newB.customType == null) {
+              const buildingTagMatch = newB.name.match(/\((.+)\)\s*(\[[^\]]+\])$/);
+              if (buildingTagMatch) {
+                const villagePart = buildingTagMatch[1];
+                const serverTagPart = buildingTagMatch[2];
+                // Strip the `#N` disambiguator the scanner appends to buildings
+                // queued at the same time, leaving the base
+                // "<name> lvl <n> (village) [tag]" identity. Alarms that share
+                // this identity are distinct completions of the same upgrade on
+                // different fields (e.g. leveling crops one-by-one) — keep them
+                // until the user clears them, instead of letting a new same-named
+                // build evict the earlier one.
+                const baseId = (n) => n.replace(/ #\d+$/, "");
+                const newBaseId = baseId(newB.name);
+                for (let i = alarms.length - 1; i >= 0; i--) {
+                  const a = alarms[i];
+                  if (
+                    a.customType == null &&
+                    !a.name.includes("⚔️") &&
+                    !a.isPinned &&
+                    baseId(a.name) !== newBaseId &&
+                    a.name.includes(`(${villagePart})`) &&
+                    a.name.includes(serverTagPart) &&
+                    (a.scheduledTime <= now || a.silenced === true)
+                  ) {
+                    alarms.splice(i, 1);
+                  }
                 }
               }
             }
+            alarms.push({
+              id: generateId(),
+              name: newB.name,
+              scheduledTime: newScheduledTime,
+              createdAt: now,
+              notified: false,
+              silenced: false,
+              recurring: newB.recurring || 0,
+              customType: newB.customType || null,
+              isPinned: false,
+              noSound: newB.noSound || false,
+            });
           }
-          alarms.push({
-            id: generateId(),
-            name: newB.name,
-            scheduledTime: newScheduledTime,
-            createdAt: now,
-            notified: false,
-            silenced: false,
-            recurring: newB.recurring || 0,
-            customType: newB.customType || null,
-            isPinned: false,
-            noSound: newB.noSound || false,
-          });
-        }
         });
         // Run a tick immediately after new alarms are added
         runAlarmTick();
@@ -787,8 +747,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         // Match both new (🎓) and old (no emoji) name formats
         if (activeSet.has(a.name)) return true;
         const legacyName = a.name.replace("🎓 ", "");
-        if (activeSet.has("🎓 " + a.name) || activeSet.has(legacyName))
-          return true;
+        if (activeSet.has("🎓 " + a.name) || activeSet.has(legacyName)) return true;
         return false;
       });
       saveState();

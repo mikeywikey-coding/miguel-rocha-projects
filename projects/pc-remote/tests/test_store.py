@@ -35,7 +35,9 @@ def test_saved_hotkeys_are_trimmed_to_safe_sizes(isolated_store):
     assert len(saved["pages"]) == 19
     first = saved["pages"][0]
     assert len(first["id"]) == 32 and len(first["name"]) == 20
-    assert first["buttons"] == [{"id": "b" * 32, "label": "L" * 24, "keys": ("ctrl+" + "x" * 100)[:64]}]
+    assert first["buttons"] == [
+        {"id": "b" * 32, "label": "L" * 24, "keys": ("ctrl+" + "x" * 100)[:64]}
+    ]
     assert json.loads(isolated_store.HOTKEYS_PATH.read_text()) == saved
 
 

@@ -1,8 +1,12 @@
 /**
- * TRAVIAN WATCHMAN PRO - TRAVIAN SVG ICONS
+ * TravAlarm: travian svg icons
  * Maps alarm types to Travian's native SVG building/resource icons.
  */
 
+// Content scripts share one global scope; see manifest.json for load order.
+/* exported
+   getAlarmSvgIcon, makeUiIcon
+*/
 const TRAVIAN_ICONS = {
   // ---- MILITARY BUILDINGS ----
   Barracks: {
@@ -234,8 +238,7 @@ function getAlarmSvgIcon(name) {
 
   // 7. Storage alarms (📦) - warehouse/granary fill with resource icons
   if (name.includes("📦")) {
-    if (lower.includes("granary") || lower.includes("crop"))
-      return makeNativeIcon("r4");
+    if (lower.includes("granary") || lower.includes("crop")) return makeNativeIcon("r4");
     if (lower.includes("warehouse")) return makeNativeIcon("r0");
     if (lower.includes("wood")) return makeNativeIcon("r1");
     if (lower.includes("clay")) return makeNativeIcon("r2");

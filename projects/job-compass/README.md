@@ -1,12 +1,10 @@
-[Back to the portfolio](../../README.md)
-
 # Job Compass
 
 A private job-search workspace for Lisbon and remote opportunities: a dashboard, scheduled discovery, Gmail reply tracking and a Brave browser companion. Application materials require review; the companion never clicks Submit.
 
 ![Job Compass with fictional sample jobs](../../assets/job-compass.png)
 
-*Isolated demo workspace. No mailbox data or personal applications are shown.*
+_Isolated demo workspace. No mailbox data or personal applications are shown._
 
 ## Run on Windows
 

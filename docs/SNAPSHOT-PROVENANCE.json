@@ -3,22 +3,28 @@
   "snapshots": [
     {
       "source": "miguel-rocha-portfolio",
-      "commit": "583317db78c748db1556af66de8845cd26548e8a",
+      "commit": "d58631ae332cced1cf737c070b5a6b96bb423d58",
       "destination": ".",
-      "files": 506
+      "paths": ["projects/build-lab", "projects/workout-tracker", "extensions"],
+      "files": 517,
+      "updated": "2026-10-01",
+      "notes": "Kept identical to miguel-rocha-portfolio, including its lint, format and CI configuration."
     },
     {
       "source": "job-compass",
-      "commit": "47c5acc26a7718dd3c3211c3453756a42bf1d68d",
+      "commit": "2589f7f469afa0f969612ca34d77f2e0a4c60c91",
       "destination": "projects/job-compass",
-      "files": 37
+      "files": 56,
+      "updated": "2026-09-28",
+      "notes": "Formatted with Black and Prettier here on 2026-10-01, with two regular-expression escapes and one unused variable removed. The README describes a clean checkout."
     },
     {
       "source": "pcremote",
-      "commit": "51efc7a605e1b6a0ebe252d12300a410b6f9dfd6",
+      "commit": "b88e2d2a23e6ab14e480df4e01d54e04f4e300bc",
       "destination": "projects/pc-remote",
       "files": 20,
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "updated": "2026-10-01"
     }
   ]
 }

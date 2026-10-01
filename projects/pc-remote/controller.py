@@ -1,4 +1,5 @@
 """Windows input control: mouse, keyboard, media, volume, power."""
+
 from __future__ import annotations
 
 import ctypes

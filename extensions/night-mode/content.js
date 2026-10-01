@@ -5,19 +5,19 @@
 // ════════════════════════════════════════════════════════════════
 
 const NIGHT_MODE_CONFIG = {
-	styleId: "travian-night-mode",
-	storageKey: "nightMode",
-	defaultEnabled: true,
-	buttonColorKey: "purpleButtonColor",
-	buttonStyleId: "travian-night-mode-buttons",
-	// Sentinel = "leave the game's native buttons untouched". Any hex value
-	// instead opts the round buttons into recoloring.
-	defaultButtonColor: "default",
-	themeAttribute: "data-theme",
-	themeValues: {
-		dark: "night",
-		light: "default",
-	},
+  styleId: "travian-night-mode",
+  storageKey: "nightMode",
+  defaultEnabled: true,
+  buttonColorKey: "purpleButtonColor",
+  buttonStyleId: "travian-night-mode-buttons",
+  // Sentinel = "leave the game's native buttons untouched". Any hex value
+  // instead opts the round buttons into recoloring.
+  defaultButtonColor: "default",
+  themeAttribute: "data-theme",
+  themeValues: {
+    dark: "night",
+    light: "default",
+  },
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -25,7 +25,7 @@ const NIGHT_MODE_CONFIG = {
 // ════════════════════════════════════════════════════════════════
 
 const THEME = {
-	variables: `
+  variables: `
 :root {
   /* Base colors */
   --nm-white:      #dcdee6;   /* Brightest */
@@ -63,10 +63,10 @@ const THEME = {
 }
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// CORE LAYOUT (Low specificity, applies broadly)
-	// ────────────────────────────────────────────────────────────
-	layout: `
+  // ────────────────────────────────────────────────────────────
+  // CORE LAYOUT (Low specificity, applies broadly)
+  // ────────────────────────────────────────────────────────────
+  layout: `
 /* Main content container */
 #content {
   background-color: var(--nm-base) !important;
@@ -261,10 +261,10 @@ tr.hover:hover td{
 }
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// SIDEBAR & TOP BAR
-	// ────────────────────────────────────────────────────────────
-	sidebar: `
+  // ────────────────────────────────────────────────────────────
+  // SIDEBAR & TOP BAR
+  // ────────────────────────────────────────────────────────────
+  sidebar: `
 /* Sidebars */
 .sidebar .sidebarBox .content:before,
 .sidebar #sidebarBoxVillageList .content .groupWrapper {
@@ -350,10 +350,10 @@ tr.hover:hover td{
 }
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// NAVIGATION
-	// ────────────────────────────────────────────────────────────
-	navigation: `
+  // ────────────────────────────────────────────────────────────
+  // NAVIGATION
+  // ────────────────────────────────────────────────────────────
+  navigation: `
 /* Tab bar container */
 .contentNavi.subNavi {
   background-color: var(--nm-input) !important;
@@ -453,10 +453,10 @@ tr.hover:hover td{
 
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// TABLES
-	// ────────────────────────────────────────────────────────────
-	tables: `
+  // ────────────────────────────────────────────────────────────
+  // TABLES
+  // ────────────────────────────────────────────────────────────
+  tables: `
 /* resources tabs */
 #content > div.contentNavi.tabNavi > div.container.active > div.content.favor {
   background-color: var(--nm-elevated) !important;
@@ -647,10 +647,10 @@ div.village3 table#overview td.vil.fc {
 }
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// FORMS & INPUTS
-	// ────────────────────────────────────────────────────────────
-	forms: `
+  // ────────────────────────────────────────────────────────────
+  // FORMS & INPUTS
+  // ────────────────────────────────────────────────────────────
+  forms: `
 /* Form inputs (scoped to #content to avoid extension conflicts) */
 #content input[type=date],
 #content input[type=datetime-local],
@@ -701,10 +701,10 @@ div.village3 table#overview td.vil.fc {
 }
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// DIALOGS & MODALS
-	// ────────────────────────────────────────────────────────────
-	dialogs: `
+  // ────────────────────────────────────────────────────────────
+  // DIALOGS & MODALS
+  // ────────────────────────────────────────────────────────────
+  dialogs: `
 /* Dialog container */
 .dialogContainer {
   background-color: var(--nm-base) !important;
@@ -959,10 +959,10 @@ div.a2b table#short_info {
 }
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// BUTTONS
-	// ────────────────────────────────────────────────────────────
-	buttons: `
+  // ────────────────────────────────────────────────────────────
+  // BUTTONS
+  // ────────────────────────────────────────────────────────────
+  buttons: `
 /* Green rectangular buttons */
 .buttonFramed.rectangle.gold:before {
   filter: hue-rotate(198deg) saturate(2) !important;
@@ -1042,10 +1042,10 @@ button.textButtonV1.purple:hover {
 }
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// GAME PAGES
-	// ────────────────────────────────────────────────────────────
-	gamePages: `
+  // ────────────────────────────────────────────────────────────
+  // GAME PAGES
+  // ────────────────────────────────────────────────────────────
+  gamePages: `
 /* === VILLAGE (DORF1/DORF2) === */
 .villageInfobox,
 .buildingList {
@@ -2213,10 +2213,10 @@ td.vil.fc {
 }
 `,
 
-	// ────────────────────────────────────────────────────────────
-	// THIRD-PARTY EXTENSIONS (Highest specificity)
-	// ────────────────────────────────────────────────────────────
-	extensions: `
+  // ────────────────────────────────────────────────────────────
+  // THIRD-PARTY EXTENSIONS (Highest specificity)
+  // ────────────────────────────────────────────────────────────
+  extensions: `
 /* === RALLY HELPER / AUTOMERCHANT === */
 ._r-panel {
   background-color: var(--nm-base) !important;
@@ -2327,22 +2327,22 @@ let currentButtonColor = NIGHT_MODE_CONFIG.defaultButtonColor;
 // ════════════════════════════════════════════════════════════════
 
 function injectCSS(cssText) {
-	let style = document.getElementById(NIGHT_MODE_CONFIG.styleId);
-	if (!style) {
-		style = document.createElement("style");
-		style.id = NIGHT_MODE_CONFIG.styleId;
-		(document.head || document.documentElement).appendChild(style);
-	}
-	style.textContent = cssText;
+  let style = document.getElementById(NIGHT_MODE_CONFIG.styleId);
+  if (!style) {
+    style = document.createElement("style");
+    style.id = NIGHT_MODE_CONFIG.styleId;
+    (document.head || document.documentElement).appendChild(style);
+  }
+  style.textContent = cssText;
 }
 
 /**
  * Removes the night mode stylesheet
  */
 function removeCSS() {
-	document.getElementById(NIGHT_MODE_CONFIG.styleId)?.remove();
-	document.getElementById(NIGHT_MODE_CONFIG.buttonStyleId)?.remove();
-	document.documentElement.style.removeProperty("--nm-btn-purple");
+  document.getElementById(NIGHT_MODE_CONFIG.styleId)?.remove();
+  document.getElementById(NIGHT_MODE_CONFIG.buttonStyleId)?.remove();
+  document.documentElement.style.removeProperty("--nm-btn-purple");
 }
 
 /**
@@ -2350,40 +2350,38 @@ function removeCSS() {
  * @param {string} theme - Theme value ('night' or 'default')
  */
 function setGameTheme(theme) {
-	document.body?.setAttribute(NIGHT_MODE_CONFIG.themeAttribute, theme);
+  document.body?.setAttribute(NIGHT_MODE_CONFIG.themeAttribute, theme);
 }
 
 /**
  * Starts observing and enforcing the night theme on the game's body element
  */
 function startThemeObserver() {
-	// Clean up existing observer if present
-	stopThemeObserver();
+  // Clean up existing observer if present
+  stopThemeObserver();
 
-	themeObserver = new MutationObserver(() => {
-		const currentTheme = document.body?.getAttribute(
-			NIGHT_MODE_CONFIG.themeAttribute,
-		);
-		if (currentTheme !== NIGHT_MODE_CONFIG.themeValues.dark) {
-			setGameTheme(NIGHT_MODE_CONFIG.themeValues.dark);
-		}
-	});
+  themeObserver = new MutationObserver(() => {
+    const currentTheme = document.body?.getAttribute(NIGHT_MODE_CONFIG.themeAttribute);
+    if (currentTheme !== NIGHT_MODE_CONFIG.themeValues.dark) {
+      setGameTheme(NIGHT_MODE_CONFIG.themeValues.dark);
+    }
+  });
 
-	themeObserver.observe(document.documentElement, {
-		childList: true,
-		subtree: true,
-		attributeFilter: [NIGHT_MODE_CONFIG.themeAttribute],
-	});
+  themeObserver.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributeFilter: [NIGHT_MODE_CONFIG.themeAttribute],
+  });
 }
 
 /**
  * Stops the theme observer
  */
 function stopThemeObserver() {
-	if (themeObserver) {
-		themeObserver.disconnect();
-		themeObserver = null;
-	}
+  if (themeObserver) {
+    themeObserver.disconnect();
+    themeObserver = null;
+  }
 }
 
 /**
@@ -2391,15 +2389,15 @@ function stopThemeObserver() {
  * @param {boolean} isEnabled - Whether night mode should be enabled
  */
 function setNightMode(isEnabled) {
-	if (isEnabled) {
-		setGameTheme(NIGHT_MODE_CONFIG.themeValues.dark);
-		applyTheme();
-		startThemeObserver();
-	} else {
-		stopThemeObserver();
-		setGameTheme(NIGHT_MODE_CONFIG.themeValues.light);
-		removeCSS();
-	}
+  if (isEnabled) {
+    setGameTheme(NIGHT_MODE_CONFIG.themeValues.dark);
+    applyTheme();
+    startThemeObserver();
+  } else {
+    stopThemeObserver();
+    setGameTheme(NIGHT_MODE_CONFIG.themeValues.light);
+    removeCSS();
+  }
 }
 
 /**
@@ -2435,36 +2433,32 @@ const ROUND_BUTTON_RECOLOR_CSS = `
  * Also removes the override when night mode is off.
  */
 function applyButtonColor() {
-	const themeActive = !!document.getElementById(NIGHT_MODE_CONFIG.styleId);
-	const existing = document.getElementById(NIGHT_MODE_CONFIG.buttonStyleId);
-	const isDefault =
-		!currentButtonColor ||
-		currentButtonColor === NIGHT_MODE_CONFIG.defaultButtonColor;
+  const themeActive = !!document.getElementById(NIGHT_MODE_CONFIG.styleId);
+  const existing = document.getElementById(NIGHT_MODE_CONFIG.buttonStyleId);
+  const isDefault =
+    !currentButtonColor || currentButtonColor === NIGHT_MODE_CONFIG.defaultButtonColor;
 
-	if (!themeActive || isDefault) {
-		existing?.remove();
-		document.documentElement.style.removeProperty("--nm-btn-purple");
-		return;
-	}
+  if (!themeActive || isDefault) {
+    existing?.remove();
+    document.documentElement.style.removeProperty("--nm-btn-purple");
+    return;
+  }
 
-	document.documentElement.style.setProperty(
-		"--nm-btn-purple",
-		currentButtonColor,
-	);
-	const style = existing ?? document.createElement("style");
-	if (!existing) {
-		style.id = NIGHT_MODE_CONFIG.buttonStyleId;
-		(document.head || document.documentElement).appendChild(style);
-	}
-	style.textContent = ROUND_BUTTON_RECOLOR_CSS;
+  document.documentElement.style.setProperty("--nm-btn-purple", currentButtonColor);
+  const style = existing ?? document.createElement("style");
+  if (!existing) {
+    style.id = NIGHT_MODE_CONFIG.buttonStyleId;
+    (document.head || document.documentElement).appendChild(style);
+  }
+  style.textContent = ROUND_BUTTON_RECOLOR_CSS;
 }
 
 /**
  * Builds the full theme CSS and injects it, then applies the button color.
  */
 function applyTheme() {
-	injectCSS(Object.values(THEME).join("\n\n"));
-	applyButtonColor();
+  injectCSS(Object.values(THEME).join("\n\n"));
+  applyButtonColor();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -2475,20 +2469,19 @@ function applyTheme() {
  * Loads night mode preference from storage and applies it
  */
 async function initializeNightMode() {
-	try {
-		const result = await chrome.storage.local.get({
-			[NIGHT_MODE_CONFIG.storageKey]: NIGHT_MODE_CONFIG.defaultEnabled,
-			[NIGHT_MODE_CONFIG.buttonColorKey]: NIGHT_MODE_CONFIG.defaultButtonColor,
-		});
-		currentButtonColor =
-			result[NIGHT_MODE_CONFIG.buttonColorKey] ||
-			NIGHT_MODE_CONFIG.defaultButtonColor;
-		const isEnabled = result[NIGHT_MODE_CONFIG.storageKey];
-		setNightMode(isEnabled);
-	} catch {
-		// If storage fails, apply default
-		setNightMode(NIGHT_MODE_CONFIG.defaultEnabled);
-	}
+  try {
+    const result = await chrome.storage.local.get({
+      [NIGHT_MODE_CONFIG.storageKey]: NIGHT_MODE_CONFIG.defaultEnabled,
+      [NIGHT_MODE_CONFIG.buttonColorKey]: NIGHT_MODE_CONFIG.defaultButtonColor,
+    });
+    currentButtonColor =
+      result[NIGHT_MODE_CONFIG.buttonColorKey] || NIGHT_MODE_CONFIG.defaultButtonColor;
+    const isEnabled = result[NIGHT_MODE_CONFIG.storageKey];
+    setNightMode(isEnabled);
+  } catch {
+    // If storage fails, apply default
+    setNightMode(NIGHT_MODE_CONFIG.defaultEnabled);
+  }
 }
 
 // Initialize on load
@@ -2496,13 +2489,13 @@ initializeNightMode();
 
 // Listen for messages from popup (toggle and/or button color change)
 chrome.runtime.onMessage.addListener((message) => {
-	if (typeof message?.buttonColor === "string") {
-		currentButtonColor = message.buttonColor;
-		// Hex → tint the buttons live; "default" sentinel → drop the override so
-		// the game's native buttons show through.
-		applyButtonColor();
-	}
-	if (typeof message?.nightMode === "boolean") {
-		setNightMode(message.nightMode);
-	}
+  if (typeof message?.buttonColor === "string") {
+    currentButtonColor = message.buttonColor;
+    // Hex → tint the buttons live; "default" sentinel → drop the override so
+    // the game's native buttons show through.
+    applyButtonColor();
+  }
+  if (typeof message?.nightMode === "boolean") {
+    setNightMode(message.nightMode);
+  }
 });

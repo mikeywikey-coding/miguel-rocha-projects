@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-import { state } from './state.js';
-import { LIB, dayKeys } from './program.js';
+import { state } from "./state.js";
+import { LIB, dayKeys } from "./program.js";
 
 const DAY_MS = 86400000;
 
@@ -21,16 +21,15 @@ const DAY_MS = 86400000;
 // taste — 1.00 is the by-the-book estimate, 1.10 is 10% over it.
 const REP_LIMIT = 30;
 const BRZYCKI_LIMIT = 12;
-const BOOST = 1.20;
+const BOOST = 1.2;
 export function e1rm(w, reps) {
   const r = Math.min(Math.max(reps || 0, 1), REP_LIMIT);
   // A completed single isn't an estimate — it's a measured 1RM. Report exactly
   // what was lifted: no boost, and no formula overshoot either.
   if (r <= 1) return w;
-  return BOOST * Math.max(
-    w * (1 + r / 30),
-    w * 36 / (37 - Math.min(r, BRZYCKI_LIMIT)),
-    w * Math.pow(r, 0.10),
+  return (
+    BOOST *
+    Math.max(w * (1 + r / 30), (w * 36) / (37 - Math.min(r, BRZYCKI_LIMIT)), w * Math.pow(r, 0.1))
   );
 }
 
@@ -42,7 +41,7 @@ export function e1rm(w, reps) {
 export function bestFor(name) {
   let best = { weight: 0, reps: 0, e1rm: 0, topWeight: 0 };
   for (const s of state.sessions) {
-    const ex = s.exercises.find(e => e.name === name);
+    const ex = s.exercises.find((e) => e.name === name);
     if (!ex) continue;
     for (const set of ex.sets) {
       if (!set.done || set.warmup || set.weight <= 0) continue;
@@ -61,12 +60,13 @@ export function bestFor(name) {
 export function repPRs(name) {
   const byWeight = new Map();
   for (const s of state.sessions) {
-    const ex = s.exercises.find(e => e.name === name);
+    const ex = s.exercises.find((e) => e.name === name);
     if (!ex) continue;
     for (const set of ex.sets) {
       if (!set.done || set.warmup || set.weight <= 0) continue;
       const cur = byWeight.get(set.weight);
-      if (!cur || set.reps > cur.reps) byWeight.set(set.weight, { weight: set.weight, reps: set.reps, date: s.date });
+      if (!cur || set.reps > cur.reps)
+        byWeight.set(set.weight, { weight: set.weight, reps: set.reps, date: s.date });
     }
   }
   return [...byWeight.values()].sort((a, b) => b.weight - a.weight);
@@ -83,9 +83,9 @@ export function repPRs(name) {
 // lbs", so they must group together. Returned `weight` is the bucketed value.
 // `extraSets` folds in sets completed in the workout still in progress, so the
 // panel reflects what you just lifted instead of going stale until you finish.
-export function repsByWeight(name, key, bucket = w => Math.round(w * 10) / 10, extraSets = []) {
+export function repsByWeight(name, key, bucket = (w) => Math.round(w * 10) / 10, extraSets = []) {
   const byWeight = new Map(); // displayed weight -> Map(reps -> times done)
-  const add = set => {
+  const add = (set) => {
     // warm-ups never count: sessions normally keep them in `warmupSets`,
     // but older/imported ones can carry them flagged inside `sets`
     if (!set.done || set.warmup || !(set.weight > 0)) return;
@@ -117,11 +117,11 @@ export function repsByWeight(name, key, bucket = w => Math.round(w * 10) / 10, e
 export function exerciseSessions(name) {
   const out = [];
   for (const s of state.sessions) {
-    const ex = s.exercises.find(e => e.name === name);
+    const ex = s.exercises.find((e) => e.name === name);
     if (!ex) continue;
-    const done = ex.sets.filter(x => x.done && !x.warmup && x.weight > 0);
+    const done = ex.sets.filter((x) => x.done && !x.warmup && x.weight > 0);
     if (!done.length) continue;
-    const top = done.reduce((a, b) => e1rm(b.weight, b.reps) > e1rm(a.weight, a.reps) ? b : a);
+    const top = done.reduce((a, b) => (e1rm(b.weight, b.reps) > e1rm(a.weight, a.reps) ? b : a));
     out.push({ date: s.date, sets: done, topE1rm: e1rm(top.weight, top.reps), top });
   }
   return out;
@@ -132,7 +132,7 @@ export function loggedExerciseNames() {
   const seen = [];
   for (let i = state.sessions.length - 1; i >= 0; i--) {
     for (const e of state.sessions[i].exercises) {
-      if (e.sets.some(s => s.done && s.weight > 0) && !seen.includes(e.name)) seen.push(e.name);
+      if (e.sets.some((s) => s.done && s.weight > 0) && !seen.includes(e.name)) seen.push(e.name);
     }
   }
   return seen;
@@ -140,28 +140,37 @@ export function loggedExerciseNames() {
 
 // simplified muscle group for a logged exercise (match an active LIB entry by name)
 function groupForName(name) {
-  const lib = Object.values(LIB).find(l => l.name === name);
+  const lib = Object.values(LIB).find((l) => l.name === name);
   const m = (lib ? lib.muscle : name).toLowerCase();
-  if (m === 'quads & glutes') return 'Glutes';
-  if (m.includes('quad')) return 'Quads';
-  if (m.includes('glute')) return 'Glutes';
-  if (m.includes('hamstring')) return 'Hamstrings';
-  if (m.includes('calf') || m.includes('calves')) return 'Calves';
-  if (m.includes('inner') || m.includes('adduct')) return 'Adductors';
-  if (m.includes('chest') || m.includes('pec')) return 'Chest';
-  if (m.includes('back') || m.includes('lat')) return 'Back';
-  if (m.includes('shoulder') || m.includes('delt')) return 'Shoulders';
-  if (m.includes('bicep')) return 'Biceps';
-  if (m.includes('tricep')) return 'Triceps';
-  if (m.includes('ab')) return 'Abs';
-  return 'Other';
+  if (m === "quads & glutes") return "Glutes";
+  if (m.includes("quad")) return "Quads";
+  if (m.includes("glute")) return "Glutes";
+  if (m.includes("hamstring")) return "Hamstrings";
+  if (m.includes("calf") || m.includes("calves")) return "Calves";
+  if (m.includes("inner") || m.includes("adduct")) return "Adductors";
+  if (m.includes("chest") || m.includes("pec")) return "Chest";
+  if (m.includes("back") || m.includes("lat")) return "Back";
+  if (m.includes("shoulder") || m.includes("delt")) return "Shoulders";
+  if (m.includes("bicep")) return "Biceps";
+  if (m.includes("tricep")) return "Triceps";
+  if (m.includes("ab")) return "Abs";
+  return "Other";
 }
 
 // MEV / MAV weekly set landmarks per muscle (rough, for the dashboard)
 export const LANDMARKS = {
-  Glutes: [6, 16], Quads: [8, 18], Hamstrings: [6, 16], Calves: [6, 16],
-  Chest: [8, 18], Back: [10, 20], Shoulders: [6, 18], Biceps: [6, 18],
-  Triceps: [6, 18], Abs: [0, 16], Adductors: [0, 12], Other: [0, 20],
+  Glutes: [6, 16],
+  Quads: [8, 18],
+  Hamstrings: [6, 16],
+  Calves: [6, 16],
+  Chest: [8, 18],
+  Back: [10, 20],
+  Shoulders: [6, 18],
+  Biceps: [6, 18],
+  Triceps: [6, 18],
+  Abs: [0, 16],
+  Adductors: [0, 12],
+  Other: [0, 20],
 };
 
 // completed working sets per muscle group over the last 7 days
@@ -171,7 +180,7 @@ export function weeklyVolume() {
   for (const s of state.sessions) {
     if (new Date(s.date) < since) continue;
     for (const e of s.exercises) {
-      const n = e.sets.filter(x => x.done && !x.warmup).length;
+      const n = e.sets.filter((x) => x.done && !x.warmup).length;
       if (!n) continue;
       const g = groupForName(e.name);
       vol[g] = (vol[g] || 0) + n;
@@ -182,21 +191,33 @@ export function weeklyVolume() {
 
 function todayStr() {
   const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  return (
+    d.getFullYear() +
+    "-" +
+    String(d.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(d.getDate()).padStart(2, "0")
+  );
 }
 
 // dates (YYYY-MM-DD) with at least one finished workout
 export function trainedDates() {
-  return new Set(state.sessions.map(s => s.date));
+  return new Set(state.sessions.map((s) => s.date));
 }
 
 function iso(d) {
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  return (
+    d.getFullYear() +
+    "-" +
+    String(d.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(d.getDate()).padStart(2, "0")
+  );
 }
 
 // Monday of the calendar week containing `d`
 function mondayOf(d) {
-  const dow = d.getDay();                 // 0 Sun … 6 Sat
+  const dow = d.getDay(); // 0 Sun … 6 Sat
   return new Date(d - ((dow + 6) % 7) * DAY_MS); // days since Monday
 }
 
@@ -209,7 +230,7 @@ export function weekCalendar(profile) {
   const keys = dayKeys(profile);
   const today = new Date(todayStr());
   const monday = mondayOf(today);
-  const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const labels = ["M", "T", "W", "T", "F", "S", "S"];
   const cells = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday.getTime() + i * DAY_MS);
@@ -220,7 +241,13 @@ export function weekCalendar(profile) {
       const di = keys.indexOf(s.day);
       if (di >= 0) trainedDay = di; // last matching session of the day wins
     }
-    cells.push({ label: labels[i], trained: dates.has(dIso), trainedDay, today: dIso === iso(today), future: d > today });
+    cells.push({
+      label: labels[i],
+      trained: dates.has(dIso),
+      trainedDay,
+      today: dIso === iso(today),
+      future: d > today,
+    });
   }
   return cells;
 }
@@ -240,7 +267,9 @@ export function weeklySchedule(profile) {
   const n = dayKeys(profile).length;
   const pat = REST_PATTERNS[n] || REST_PATTERNS[3];
   const byWeekday = new Array(7).fill(null);
-  pat.forEach((wd, dayIdx) => { byWeekday[wd] = dayIdx; });
+  pat.forEach((wd, dayIdx) => {
+    byWeekday[wd] = dayIdx;
+  });
   return byWeekday;
 }
 
@@ -251,7 +280,8 @@ export function weekStreak() {
   let streak = 0;
   for (let w = 0; w < 52; w++) {
     let c = 0;
-    for (let i = 0; i < 7; i++) if (dates.has(iso(new Date(thisMon - w * 7 * DAY_MS + i * DAY_MS)))) c++;
+    for (let i = 0; i < 7; i++)
+      if (dates.has(iso(new Date(thisMon - w * 7 * DAY_MS + i * DAY_MS)))) c++;
     if (c >= 2) streak++;
     else break;
   }

@@ -1,35 +1,39 @@
-[Back to the portfolio](../../README.md)
-
 # Build Lab
 
 A React planner for NBA 2K27 player builds, with linked attribute changes, saved-build comparisons and an undoable editing workflow.
 
-**Stack:** React, JavaScript, Vite, Playwright, Node.js tests.
+**Stack:** React 19, JavaScript, Vite, Playwright, Node.js test runner.
 
-![Build Lab player-build planning interface](../../assets/build-lab-dashboard.png)
+![Build Lab](../../assets/build-lab.png)
 
 ## Features
 
-- Attribute editing, locks, linked calculations and atomic undo.
+- Attribute editing with locks, linked attribute rules and atomic undo.
 - Body settings, badge requirements and cap-breaker planning.
-- Saved builds, comparisons, URL imports and image exports.
-- Separate calculation modules and automated checks.
+- Saved builds, side-by-side comparisons, shareable links and image exports.
+- Responsive attribute lanes that reflow with the editor's width (CSS container queries).
 
 ## Run locally
 
 ```sh
 npm ci
-npm run dev -- --host 127.0.0.1 --port 4173
+npm run dev
 ```
 
-Open `http://127.0.0.1:4173`. Run `npm test` for the included calculation tests and `npm run build` for a standalone static build in `dist/client/`.
+Open `http://127.0.0.1:4173`. `npm run build` produces a static site in `dist/client/`.
 
-Browser checks use `npm run test:ui` with the dev server running and Microsoft Edge installed, as specified in `playwright.config.js`.
+## Tests
 
-## Source guide and limitations
+- `npm test` runs the calculation tests in `tests/*.test.mjs`: linked-attribute rules, cap projections, cost curves, locks and share links.
+- `npm run test:ui` starts the dev server and runs the Playwright browser tests in `tests/ui/`: editing flows, saved builds, layout at several widths and typography. It uses Playwright's Chromium; set `PLAYWRIGHT_CHANNEL=msedge` to use an installed Edge instead.
 
-`src/engine/` contains the calculation logic and `src/catalogs/` contains compiled catalog data. `tests/` includes calculation and browser tests.
+## Source guide
 
-Game rules and data are externally sourced; this is not an official or fully verified reproduction of the game. See [feature parity](feature-parity.md) and the [dataset notes](research/nba2k27-builder-dataset/README.md). Some upstream documentation refers to research material retained only in the original working project.
+- `src/Builder.jsx` owns the application state and wires handlers to the components in `src/components/`.
+- `src/storage.js` restores and saves the draft and the saved-build library, turning every storage failure into a user-facing notice.
+- `src/engine/` holds the calculation logic: linked attributes, cap breakers and projections. It has no React dependency, so it is tested directly.
+- `src/catalogs/` holds compiled badge, animation and takeover data.
 
-The portfolio uses a standalone Vite build. Original Sites hosting configuration, deployment identifiers and extraction tools are excluded. The hosting-specific test is excluded; the remaining tests are retained without changes. Three recovered external calculation modules are required by the current implementation and are retained under `research/locker-chunks/`; these are third-party inputs, not original portfolio code.
+## Accuracy
+
+Game rules and data are externally sourced; this is not an official or fully verified reproduction of the game. See [feature parity](feature-parity.md) and the [dataset notes](research/nba2k27-builder-dataset/README.md). The linked-attribute table in `src/engine/linked-attributes.json` was extracted from a third-party builder and records its provenance.

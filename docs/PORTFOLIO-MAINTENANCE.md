@@ -1,26 +1,24 @@
 # Maintaining this portfolio
 
-This repository is a curated snapshot, not a replacement for the original working projects. Update project copies deliberately and review the diff before committing.
+This repository holds portfolio copies of personal projects. Each project is developed in its own working repository, then copied here deliberately and reviewed before committing.
 
 ## Organisation
 
 - `projects/`: Job Compass, Build Lab, PC Remote and Workout Tracker. The M4 mod is linked to its Nexus Mods page only.
-- `extensions/`: only the four extensions selected for the CV.
-- `assets/`: a selected Build Lab screenshot.
+- `extensions/`: the four Travian browser extensions, with shared tests in `extensions/tests/`.
+- `assets/`: the header and screenshots used by the READMEs.
+- `docs/`: reviewer guide, validation notes, snapshot provenance and this guide.
 - `ATTRIBUTION.md`: third-party sources and ownership notes.
 
-## Excluded material
+## Updating a project
 
-No existing Git histories, installed dependencies, browser profiles, local agent settings, personal CV documents, local PC Remote configuration and paired devices, deployment credentials or large mod archives are included.
+1. Copy the changed source in from the working repository. Record its commit in `SNAPSHOT-PROVENANCE.json`.
+2. Run `npm run lint`, `npm run format:check` and `npm test` from the root, plus the project's own checks: Build Lab `npm test` and `npm run test:ui`; Job Compass and PC Remote `black --check .` and `python -m pytest`; Job Compass also `node --test tests/*.cjs`.
+3. Update the project's README if features or commands changed.
+4. Open a pull request and let CI pass before merging.
 
-The original project locations and original Git histories remain untouched. Build Lab's build command is adapted to standalone Vite; extension application code is copied unchanged.
+Build Lab, Workout Tracker and the extensions are kept identical to the [miguel-rocha-portfolio](https://github.com/mikeywikey-coding/miguel-rocha-portfolio) repository; change them there first, then copy them across.
 
-Before sharing publicly, review third-party asset permissions and project descriptions. A private GitHub link alone will not let a recruiter browse the work.
+## Never committed
 
-## Standalone repository (25 September 2026)
-
-This repository starts with fresh history. Its base is the previously curated portfolio, with the tracked Job Compass source added under `projects/job-compass/`. Exact source commits are recorded in `SNAPSHOT-PROVENANCE.json`. The original repositories remain independent. Copy reviewed source changes deliberately; do not copy `.git`, credentials, runtime databases, personal CV files or dependencies. Job Compass setup notes were adapted to describe a clean checkout.
-
-## Readability cleanup
-
-On 26 September 2026, selected first-party Python and JavaScript modules were formatted for review. Snapshot provenance records the upstream starting revisions; these formatting changes are portfolio-specific. Python and JavaScript syntax-tree comparisons verified unchanged logic. See `VALIDATION.md` and `REVIEWER-GUIDE.md` for coverage and entry points.
+Installed dependencies, browser profiles, local agent settings, deployment credentials, personal CV documents, Job Compass's `data/` directory, PC Remote's local configuration and paired devices, and large mod archives stay out of the repository. `.gitignore` covers the common cases; review the diff for anything else.

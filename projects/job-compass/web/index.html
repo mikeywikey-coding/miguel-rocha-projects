@@ -1,25 +1,94 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101c1b"><title>Job Compass · Your next chapter</title><link rel="stylesheet" href="/static/styles.css"><script src="/static/app.js" defer></script></head>
-<body>
-<aside class="sidebar">
- <a href="/" class="brand"><span class="brand-mark">↗</span> job compass<span class="beta">EARLY ACCESS</span></a>
- <p class="nav-label">YOUR WORKSPACE</p>
- <nav aria-label="Main navigation">
-  <button data-view="discover" class="nav active"><span>◈</span> Discover <b id="new-count">0</b></button>
-  <button data-view="review" class="nav"><span>☷</span> Review queue <b id="review-count">0</b></button>
-  <button data-view="applications" class="nav"><span>↗</span> Applications</button>
-  <button data-view="inbox" class="nav"><span>✉</span> Replies <b id="mail-count">0</b></button>
- </nav>
- <p class="nav-label">PREFERENCES</p>
- <nav aria-label="Preferences"><button data-view="sources" class="nav"><span>◎</span> Job sources</button><button data-view="settings" class="nav"><span>⚙</span> Settings</button></nav>
- <div class="side-note"><span class="status-dot"></span><strong>You're in control</strong><p>Discovery runs automatically.<br>Every application starts with your review.</p></div>
- <div class="account"><span class="avatar">MR</span><div><strong>Miguel Rocha</strong><small>Lisbon, Portugal</small></div><span class="private">PRIVATE</span></div>
-</aside>
-<main>
- <header class="topbar"><span id="breadcrumb">Workspace / Discover</span><span class="top-status"><i class="status-dot"></i> <span id="automation-status">Connecting…</span></span></header>
- <section id="content" aria-live="polite"><div class="empty"><h1>Your next chapter starts here.</h1><p>Loading your workspace…</p></div></section>
-</main>
-<dialog id="detail"><div id="detail-content"></div></dialog>
-<dialog id="import-dialog"><form id="import-form"><div class="dialog-heading"><div><p class="eyebrow">ADD AN OPPORTUNITY</p><h2>Found something interesting?</h2></div><button type="button" data-action="close-import" class="icon-button" aria-label="Close import">×</button></div><p class="muted">Paste the listing details, or capture them with the Brave companion.</p><label>Job title<input name="title" required maxlength="300"></label><div class="form-row"><label>Company<input name="company" required maxlength="200"></label><label>Location<input name="location" placeholder="Lisbon / Remote — Portugal" maxlength="300"></label></div><label>Listing URL<input name="url" type="url" required></label><label>Job description<textarea name="description" rows="7" maxlength="60000"></textarea></label><button class="primary" type="submit">Add to my list ↗</button></form></dialog>
-<div id="toast" class="toast" role="status" hidden></div>
-</body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#101c1b" />
+    <title>Job Compass · Your next chapter</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a href="/" class="brand"
+        ><span class="brand-mark">↗</span> job compass<span class="beta">EARLY ACCESS</span></a
+      >
+      <p class="nav-label">YOUR WORKSPACE</p>
+      <nav aria-label="Main navigation">
+        <button data-view="discover" class="nav active">
+          <span>◈</span> Discover <b id="new-count">0</b>
+        </button>
+        <button data-view="review" class="nav">
+          <span>☷</span> Review queue <b id="review-count">0</b>
+        </button>
+        <button data-view="applications" class="nav"><span>↗</span> Applications</button>
+        <button data-view="inbox" class="nav">
+          <span>✉</span> Replies <b id="mail-count">0</b>
+        </button>
+      </nav>
+      <p class="nav-label">PREFERENCES</p>
+      <nav aria-label="Preferences">
+        <button data-view="sources" class="nav"><span>◎</span> Job sources</button
+        ><button data-view="settings" class="nav"><span>⚙</span> Settings</button>
+      </nav>
+      <div class="side-note">
+        <span class="status-dot"></span><strong>You're in control</strong>
+        <p>Discovery runs automatically.<br />Every application starts with your review.</p>
+      </div>
+      <div class="account">
+        <span class="avatar">MR</span>
+        <div><strong>Miguel Rocha</strong><small>Lisbon, Portugal</small></div>
+        <span class="private">PRIVATE</span>
+      </div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <span id="breadcrumb">Workspace / Discover</span
+        ><span class="top-status"
+          ><i class="status-dot"></i> <span id="automation-status">Connecting…</span></span
+        >
+      </header>
+      <section id="content" aria-live="polite">
+        <div class="empty">
+          <h1>Your next chapter starts here.</h1>
+          <p>Loading your workspace…</p>
+        </div>
+      </section>
+    </main>
+    <dialog id="detail"><div id="detail-content"></div></dialog>
+    <dialog id="import-dialog">
+      <form id="import-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">ADD AN OPPORTUNITY</p>
+            <h2>Found something interesting?</h2>
+          </div>
+          <button
+            type="button"
+            data-action="close-import"
+            class="icon-button"
+            aria-label="Close import"
+          >
+            ×
+          </button>
+        </div>
+        <p class="muted">Paste the listing details, or capture them with the Brave companion.</p>
+        <label>Job title<input name="title" required maxlength="300" /></label>
+        <div class="form-row">
+          <label>Company<input name="company" required maxlength="200" /></label
+          ><label
+            >Location<input
+              name="location"
+              placeholder="Lisbon / Remote — Portugal"
+              maxlength="300"
+          /></label>
+        </div>
+        <label>Listing URL<input name="url" type="url" required /></label
+        ><label
+          >Job description<textarea name="description" rows="7" maxlength="60000"></textarea></label
+        ><button class="primary" type="submit">Add to my list ↗</button>
+      </form>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+  </body>
+</html>

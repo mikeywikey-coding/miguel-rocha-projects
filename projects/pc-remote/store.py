@@ -1,4 +1,5 @@
 """Config, hotkey and paired-device persistence."""
+
 from __future__ import annotations
 
 import hashlib
@@ -95,7 +96,9 @@ def load_config() -> dict:
     config = _read_json(CONFIG_PATH) or {}
     changed = False
     if not config.get("pin"):
-        config["pin"] = f"{secrets.randbelow(10**DEFAULT_PIN_DIGITS):0{DEFAULT_PIN_DIGITS}d}"
+        config["pin"] = (
+            f"{secrets.randbelow(10**DEFAULT_PIN_DIGITS):0{DEFAULT_PIN_DIGITS}d}"
+        )
         changed = True
     if not config.get("port"):
         config["port"] = 8765
@@ -134,11 +137,15 @@ def save_hotkeys(pages) -> dict:
             keys = str(button.get("keys", "")).strip()[:64]
             if not label or not keys:
                 continue
-            buttons.append({"id": _item_id(button.get("id")), "label": label, "keys": keys})
+            buttons.append(
+                {"id": _item_id(button.get("id")), "label": label, "keys": keys}
+            )
         name = str(page.get("name", "")).strip()[:20]
         if not name:
             continue
-        clean_pages.append({"id": _item_id(page.get("id")), "name": name, "buttons": buttons})
+        clean_pages.append(
+            {"id": _item_id(page.get("id")), "name": name, "buttons": buttons}
+        )
 
     data = {"pages": clean_pages}
     _write_json(HOTKEYS_PATH, data)
@@ -149,7 +156,9 @@ def save_hotkeys(pages) -> dict:
 
 
 def _pin_check(pin: str, salt: str) -> str:
-    return hmac.new(bytes.fromhex(salt), pin.encode("utf-8"), hashlib.sha256).hexdigest()
+    return hmac.new(
+        bytes.fromhex(salt), pin.encode("utf-8"), hashlib.sha256
+    ).hexdigest()
 
 
 def load_devices(pin: str) -> dict:
@@ -177,4 +186,7 @@ def load_devices(pin: str) -> dict:
 
 def save_devices(pin: str, devices: dict) -> None:
     salt = secrets.token_hex(16)
-    _write_json(DEVICES_PATH, {"salt": salt, "pin_check": _pin_check(pin, salt), "devices": devices})
+    _write_json(
+        DEVICES_PATH,
+        {"salt": salt, "pin_check": _pin_check(pin, salt), "devices": devices},
+    )

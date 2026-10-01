@@ -1,23 +1,11 @@
-import {
-  getRules,
-  getCaps,
-  getOverall,
-  normalizeBody,
-  attributeIds,
-} from "./gameRules.js";
-import {
-  applyAttributeChange,
-  reconcileAttributes,
-  satisfyMinimums,
-} from "./dependencies.js";
+import { getRules, getCaps, getOverall, normalizeBody, attributeIds } from "./gameRules.js";
+import { applyAttributeChange, reconcileAttributes, satisfyMinimums } from "./dependencies.js";
 import { exactBodyCaps } from "./capBreakerEngine.js";
 export function buildCaps(body) {
   return exactBodyCaps(body) ?? getCaps(body);
 }
 export const usableCaps = (body) =>
-  Object.fromEntries(
-    Object.entries(buildCaps(body)).map(([id, cap]) => [id, cap ?? 25]),
-  );
+  Object.fromEntries(Object.entries(buildCaps(body)).map(([id, cap]) => [id, cap ?? 25]));
 const allocations = (breakers, ratings, caps) =>
   Object.fromEntries(
     attributeIds.map((id) => [
@@ -25,20 +13,9 @@ const allocations = (breakers, ratings, caps) =>
       Math.min(breakers[id] || 0, 5, Math.max(0, caps[id] - ratings[id])),
     ]),
   );
-export function editRating(
-  build,
-  id,
-  value,
-  rules = getRules(build.body.height),
-) {
+export function editRating(build, id, value, rules = getRules(build.body.height)) {
   if (build.locks?.[id])
-    return {
-      build,
-      adjustments: [],
-      constrained: true,
-      lockLimited: true,
-      blockedBy: [id],
-    };
+    return { build, adjustments: [], constrained: true, lockLimited: true, blockedBy: [id] };
   const caps = usableCaps(build.body),
     before = build.ratings;
   const requested = Math.max(25, Math.min(caps[id], Math.round(value)));
@@ -53,8 +30,7 @@ export function editRating(
   if (requested > before[id]) {
     for (
       let candidate = requested;
-      getOverall(result.ratings, build.body.height).uncapped > 99 + 1e-6 &&
-      candidate >= before[id];
+      getOverall(result.ratings, build.body.height).uncapped > 99 + 1e-6 && candidate >= before[id];
       candidate--
     ) {
       budgetLimited = true;
@@ -74,13 +50,7 @@ export function editRating(
     (key) => build.locks?.[key] && result.ratings[key] !== before[key],
   );
   if (blockedBy.length)
-    return {
-      build,
-      adjustments: [],
-      constrained: true,
-      lockLimited: true,
-      blockedBy,
-    };
+    return { build, adjustments: [], constrained: true, lockLimited: true, blockedBy };
   return {
     build: {
       ...build,
@@ -92,19 +62,9 @@ export function editRating(
     budgetLimited,
   };
 }
-export function minimizeAttribute(
-  build,
-  id,
-  rules = getRules(build.body.height),
-) {
+export function minimizeAttribute(build, id, rules = getRules(build.body.height)) {
   if (build.locks?.[id])
-    return {
-      build,
-      adjustments: [],
-      changed: false,
-      lockLimited: true,
-      blockedBy: [id],
-    };
+    return { build, adjustments: [], changed: false, lockLimited: true, blockedBy: [id] };
   for (let candidate = 25; candidate < build.ratings[id]; candidate++) {
     const result = editRating(build, id, candidate, rules);
     if (!result.lockLimited && result.build.ratings[id] < build.ratings[id])
@@ -113,25 +73,17 @@ export function minimizeAttribute(
   return { build, adjustments: [], changed: false };
 }
 export function changeBody(build, key, value) {
-  const body = normalizeBody(
-      typeof key === "object" ? key : { ...build.body, [key]: value },
-    ),
+  const body = normalizeBody(typeof key === "object" ? key : { ...build.body, [key]: value }),
     caps = usableCaps(body);
   const clamped = Object.fromEntries(
     attributeIds.map((id) => [id, Math.min(build.ratings[id], caps[id])]),
   );
-  const ratings = reconcileAttributes({
-    ratings: clamped,
-    caps,
-    rules: getRules(body.height),
-  });
+  const ratings = reconcileAttributes({ ratings: clamped, caps, rules: getRules(body.height) });
   const releasedLocks = attributeIds.filter(
     (id) => build.locks?.[id] && ratings[id] !== build.ratings[id],
   );
   const locks = Object.fromEntries(
-    Object.entries(build.locks || {}).filter(
-      ([id]) => !releasedLocks.includes(id),
-    ),
+    Object.entries(build.locks || {}).filter(([id]) => !releasedLocks.includes(id)),
   );
   const adjustments = attributeIds
     .filter((id) => ratings[id] !== build.ratings[id])
@@ -157,34 +109,22 @@ export function minimizeUnlocked(build, rules = getRules(build.body.height)) {
     attributeIds.map((id) => [id, build.locks?.[id] ? build.ratings[id] : 25]),
   );
   const ratings = satisfyMinimums({ ratings: floor, caps, rules });
-  if (
-    attributeIds.some(
-      (id) => build.locks?.[id] && ratings[id] !== build.ratings[id],
-    )
-  )
+  if (attributeIds.some((id) => build.locks?.[id] && ratings[id] !== build.ratings[id]))
     return { build, changed: false, lockLimited: true };
   if (attributeIds.every((id) => ratings[id] === build.ratings[id]))
     return { build, changed: false };
   return {
-    build: {
-      ...build,
-      ratings,
-      breakers: allocations(build.breakers, ratings, caps),
-    },
+    build: { ...build, ratings, breakers: allocations(build.breakers, ratings, caps) },
     changed: true,
   };
 }
-export function attributeIncreaseCosts(
-  build,
-  rules = getRules(build.body.height),
-) {
+export function attributeIncreaseCosts(build, rules = getRules(build.body.height)) {
   const caps = usableCaps(build.body),
     before = build.ratings;
   const beforeOverall = getOverall(before, build.body.height).uncapped;
   const invalid = rules.some((rule) =>
     rule.steps.some(
-      ([rating, minimum]) =>
-        before[rule.source] >= rating && before[rule.target] < minimum,
+      ([rating, minimum]) => before[rule.source] >= rating && before[rule.target] < minimum,
     ),
   );
   return Object.fromEntries(
@@ -205,16 +145,10 @@ export function attributeIncreaseCosts(
         attribute: id,
         value: before[id] + 1,
       });
-      if (result.ratings[id] !== before[id] + 1)
-        return [id, { ...base, status: "linked-cap" }];
-      const changed = attributeIds.filter(
-        (key) => result.ratings[key] !== before[key],
-      );
+      if (result.ratings[id] !== before[id] + 1) return [id, { ...base, status: "linked-cap" }];
+      const changed = attributeIds.filter((key) => result.ratings[key] !== before[key]);
       const lockedAttributes = changed.filter((key) => build.locks?.[key]);
-      const afterOverall = getOverall(
-        result.ratings,
-        build.body.height,
-      ).uncapped;
+      const afterOverall = getOverall(result.ratings, build.body.height).uncapped;
       return [
         id,
         {
@@ -224,11 +158,7 @@ export function attributeIncreaseCosts(
           overallDelta: afterOverall - beforeOverall,
           adjustments: changed
             .filter((key) => key !== id)
-            .map((key) => ({
-              id: key,
-              before: before[key],
-              after: result.ratings[key],
-            })),
+            .map((key) => ({ id: key, before: before[key], after: result.ratings[key] })),
           lockedAttributes,
           status: lockedAttributes.length
             ? "locked"

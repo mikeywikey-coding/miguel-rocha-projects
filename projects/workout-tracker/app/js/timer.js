@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-import { $timer } from './dom.js';
+import { $timer } from "./dom.js";
 
 let timerInterval = null;
 let timerEndsAt = 0;
@@ -26,7 +26,7 @@ export function startTimer(seconds) {
   // you only ever see one): the service worker fires even with the app in the
   // background or the screen off, while this page timer handles the foreground
   // case and produces the beep.
-  swAlarm({ type: 'REST_ALARM', delay: seconds * 1000 });
+  swAlarm({ type: "REST_ALARM", delay: seconds * 1000 });
   alarmTimeout = setTimeout(fireAlarm, seconds * 1000);
   tickTimer();
   timerInterval = setInterval(tickTimer, 250);
@@ -34,10 +34,10 @@ export function startTimer(seconds) {
 
 function tickTimer() {
   const left = Math.max(0, Math.ceil((timerEndsAt - Date.now()) / 1000));
-  const el = document.getElementById('timer-time');
-  if (el) el.textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
-  const fill = document.getElementById('timer-fill');
-  if (fill) fill.style.width = (left / timerTotal * 100) + '%';
+  const el = document.getElementById("timer-time");
+  if (el) el.textContent = Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0");
+  const fill = document.getElementById("timer-fill");
+  if (fill) fill.style.width = (left / timerTotal) * 100 + "%";
   if (left <= 0) fireAlarm();
 }
 
@@ -46,10 +46,16 @@ function tickTimer() {
 function fireAlarm() {
   if (!armed) return;
   armed = false;
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  if (alarmTimeout) { clearTimeout(alarmTimeout); alarmTimeout = null; }
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  if (alarmTimeout) {
+    clearTimeout(alarmTimeout);
+    alarmTimeout = null;
+  }
   $timer.hidden = true;
-  swAlarm({ type: 'REST_ALARM_CANCEL' }); // we got here first — drop the backup
+  swAlarm({ type: "REST_ALARM_CANCEL" }); // we got here first — drop the backup
   showRestNotification();
   if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]);
   beep();
@@ -59,8 +65,11 @@ export function stopTimer() {
   armed = false;
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = null;
-  if (alarmTimeout) { clearTimeout(alarmTimeout); alarmTimeout = null; }
-  swAlarm({ type: 'REST_ALARM_CANCEL' });
+  if (alarmTimeout) {
+    clearTimeout(alarmTimeout);
+    alarmTimeout = null;
+  }
+  swAlarm({ type: "REST_ALARM_CANCEL" });
   $timer.hidden = true;
 }
 
@@ -69,20 +78,28 @@ function swAlarm(msg) {
   try {
     const sw = navigator.serviceWorker;
     if (sw && sw.controller) sw.controller.postMessage(msg);
-  } catch (e) { /* ignore */ }
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 // The worker beat us to it: stand down quietly. It has already shown the
 // notification, so don't alert twice — just clear the timer bar, and beep only
 // if the app is actually on screen to hear it.
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('message', e => {
-    if (!e.data || e.data.type !== 'REST_ALARM_FIRED' || !armed) return;
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.addEventListener("message", (e) => {
+    if (!e.data || e.data.type !== "REST_ALARM_FIRED" || !armed) return;
     armed = false;
-    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-    if (alarmTimeout) { clearTimeout(alarmTimeout); alarmTimeout = null; }
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    if (alarmTimeout) {
+      clearTimeout(alarmTimeout);
+      alarmTimeout = null;
+    }
     $timer.hidden = true;
-    if (document.visibilityState === 'visible') beep();
+    if (document.visibilityState === "visible") beep();
   });
   // addEventListener alone leaves worker messages queued forever — delivery
   // only starts once onmessage is assigned or this is called
@@ -91,8 +108,8 @@ if ('serviceWorker' in navigator) {
 
 // If the rest ended while the app was backgrounded (JS timers frozen), fire as
 // soon as the user returns to the app.
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && armed && Date.now() >= timerEndsAt) {
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && armed && Date.now() >= timerEndsAt) {
     fireAlarm();
   }
 });
@@ -101,21 +118,23 @@ document.addEventListener('visibilitychange', () => {
 // notification makes the OS play its alert sound + vibrate even when locked.
 async function showRestNotification() {
   try {
-    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
     const opts = {
-      body: 'Time for your next set',
-      tag: 'rest-timer',
+      body: "Time for your next set",
+      tag: "rest-timer",
       renotify: true,
       vibrate: [300, 150, 300],
       silent: false,
     };
-    if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+    if ("serviceWorker" in navigator && navigator.serviceWorker.ready) {
       const reg = await navigator.serviceWorker.ready;
-      reg.showNotification('Rest done 💪', opts);
+      reg.showNotification("Rest done 💪", opts);
     } else {
-      new Notification('Rest done 💪', opts);
+      new Notification("Rest done 💪", opts);
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 /* ----------------------------------------------------------------------------
@@ -134,8 +153,10 @@ let audioCtx = null;
 // where Web Audio already ducks rather than seizes playback.
 function setAudioSession(type) {
   try {
-    if ('audioSession' in navigator) navigator.audioSession.type = type;
-  } catch (e) { /* ignore */ }
+    if ("audioSession" in navigator) navigator.audioSession.type = type;
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 // Called from the set-done tap (a user gesture) so iOS unlocks audio and the
@@ -143,15 +164,19 @@ function setAudioSession(type) {
 // the lock-screen alarm. Never takes exclusive audio focus → Spotify plays on.
 export function ensureAudio() {
   try {
-    setAudioSession('ambient'); // mix with Spotify, never interrupt it
+    setAudioSession("ambient"); // mix with Spotify, never interrupt it
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-  } catch (e) { /* no audio support */ }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  } catch (e) {
+    /* no audio support */
+  }
   try {
-    if ('Notification' in window && Notification.permission === 'default') {
+    if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission();
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 function playBeeps() {
@@ -168,11 +193,17 @@ function playBeeps() {
       osc.start(t);
       osc.stop(t + 0.25);
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 function beep() {
   if (!audioCtx) return;
-  if (audioCtx.state === 'suspended') audioCtx.resume().then(playBeeps).catch(() => {});
+  if (audioCtx.state === "suspended")
+    audioCtx
+      .resume()
+      .then(playBeeps)
+      .catch(() => {});
   else playBeeps();
 }

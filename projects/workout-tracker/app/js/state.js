@@ -41,12 +41,7 @@ function loadState() {
         pr.style = pr.style || "full";
         if (pr.days == null) pr.days = 3;
       } else {
-        const map = {
-          full: ["full", 3],
-          ul: ["ul", 4],
-          five: ["ul", 5],
-          ppl: ["ppl", 6],
-        };
+        const map = { full: ["full", 3], ul: ["ul", 4], five: ["ul", 5], ppl: ["ppl", 6] };
         const m = map[old] || ["full", 3];
         if (!pr.style) pr.style = m[0];
         if (pr.days == null) pr.days = m[1];
@@ -125,9 +120,7 @@ export function todayISO() {
 // Total week count since the first workout; grows forever
 export function currentWeek() {
   if (!state.blockStart) return 1;
-  const days = Math.floor(
-    (new Date(todayISO()) - new Date(state.blockStart)) / 86400000,
-  );
+  const days = Math.floor((new Date(todayISO()) - new Date(state.blockStart)) / 86400000);
   return Math.floor(days / 7) + 1;
 }
 
@@ -143,12 +136,9 @@ export function rirLabel(week) {
   return RIR_BY_WEEK[Math.min(week, 8) - 1];
 }
 
-// Sets for a slot: base + experience-level bonus + RP-style ramp + the day's
-// auto-regulation adjustment (from last session's feedback). idx = position in
-// the day (0-based); the first two slots are the priority lifts.
-export function setsForWeek(slot, week, idx, dayAdj = 0) {
-  // Flat 2 working sets for every exercise, every week (user preference).
-  // No level/week/auto-regulation ramp — add a 3rd manually with +Add set.
+// Working sets for a slot. Deliberately flat: two sets for every exercise, every
+// week (user preference); a third can be added in the session with +Add set.
+export function setsForWeek() {
   return 2;
 }
 
@@ -163,17 +153,12 @@ export function lastSession(day) {
 export function lastExercise(day, exName, exKey) {
   const s = lastSession(day);
   if (!s) return null;
-  return (
-    s.exercises.find((e) => e.name === exName || (exKey && e.key === exKey)) ||
-    null
-  );
+  return s.exercises.find((e) => e.name === exName || (exKey && e.key === exKey)) || null;
 }
 
 export function lastAnyExercise(name, key) {
   for (let i = state.sessions.length - 1; i >= 0; i--) {
-    const ex = state.sessions[i].exercises.find(
-      (e) => e.name === name || (key && e.key === key),
-    );
+    const ex = state.sessions[i].exercises.find((e) => e.name === name || (key && e.key === key));
     if (ex) return ex;
   }
   return null;
@@ -189,11 +174,7 @@ export function progressionDue(day, exName, repMax, exKey) {
 /* ---------- weekly skips (current week only) ---------- */
 // Monday (local) of the week containing `d`, as YYYY-MM-DD — the skip-bucket key
 export function weekMonIso(d = new Date()) {
-  const mon = new Date(
-    d.getFullYear(),
-    d.getMonth(),
-    d.getDate() - ((d.getDay() + 6) % 7),
-  );
+  const mon = new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7));
   return (
     mon.getFullYear() +
     "-" +
@@ -213,8 +194,7 @@ export function weekSkips() {
 export function toggleWeekSkip(wd) {
   const key = weekMonIso();
   if (!state.weekSkips) state.weekSkips = {};
-  for (const k of Object.keys(state.weekSkips))
-    if (k !== key) delete state.weekSkips[k];
+  for (const k of Object.keys(state.weekSkips)) if (k !== key) delete state.weekSkips[k];
   const set = new Set(state.weekSkips[key] || []);
   set.has(wd) ? set.delete(wd) : set.add(wd);
   state.weekSkips[key] = [...set];
@@ -236,10 +216,7 @@ export function moveSessionsTo(fromIso, toIso) {
 
 /* ---------- formatting ---------- */
 export function fmtDate(iso) {
-  return new Date(iso).toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-  });
+  return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
 }
 
 export function fmtDateLong(iso) {

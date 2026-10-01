@@ -60,7 +60,9 @@ def server(monkeypatch):
 class FakeSocket:
     """Stands in for a websockets connection: hands out queued messages, records replies."""
 
-    def __init__(self, messages, ip="192.168.1.20", agent="Mozilla/5.0 (iPhone)", silent=False):
+    def __init__(
+        self, messages, ip="192.168.1.20", agent="Mozilla/5.0 (iPhone)", silent=False
+    ):
         self.remote_address = (ip, 50000)
         self.request = SimpleNamespace(headers={"User-Agent": agent})
         self._queue = [m if isinstance(m, str) else json.dumps(m) for m in messages]

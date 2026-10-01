@@ -26,125 +26,125 @@
 // endpoint is called by this feature — the reward request is still made by
 // Travian's own player code, in response to its own `ended` event.
 (function () {
-	const STORAGE_KEYS = [
-		'skipAds.debug',
-		'skipAds.minPlaytime',
-		'skipAds.videoLookupPollRate',
-		'skipAds.videoSkipPollRate',
-	];
-	const DEFAULTS = {
-		'skipAds.debug': false,
-		'skipAds.minPlaytime': 0.4,
-		'skipAds.videoLookupPollRate': 50,
-		'skipAds.videoSkipPollRate': 300,
-	};
+  const STORAGE_KEYS = [
+    "skipAds.debug",
+    "skipAds.minPlaytime",
+    "skipAds.videoLookupPollRate",
+    "skipAds.videoSkipPollRate",
+  ];
+  const DEFAULTS = {
+    "skipAds.debug": false,
+    "skipAds.minPlaytime": 0.4,
+    "skipAds.videoLookupPollRate": 50,
+    "skipAds.videoSkipPollRate": 300,
+  };
 
-	// Where the in-page player renders. `#videoArea` is the div id main.js
-	// hands to playInPageAd(); the dialog around it is `#videoFeature`.
-	const AD_CONTAINER_SELECTOR = '#videoArea, #videoFeature';
+  // Where the in-page player renders. `#videoArea` is the div id main.js
+  // hands to playInPageAd(); the dialog around it is `#videoFeature`.
+  const AD_CONTAINER_SELECTOR = "#videoArea, #videoFeature";
 
-	let observer = null;
-	let skipTimer = null;
-	let settings = { ...DEFAULTS };
+  let observer = null;
+  let skipTimer = null;
+  let settings = { ...DEFAULTS };
 
-	function debug() {
-		return !!settings['skipAds.debug'];
-	}
+  function debug() {
+    return !!settings["skipAds.debug"];
+  }
 
-	function trace(...args) {
-		if (debug()) console.log('TravianQoL/skip-ads:', ...args);
-	}
+  function trace(...args) {
+    if (debug()) console.log("TravianQoL/skip-ads:", ...args);
+  }
 
-	function isAdIframe() {
-		if (window.top === window.self) return false;
-		const url = window.location.href;
-		return url.includes('media.oadts.com') && url.includes('delivery') && url.includes('afv.php');
-	}
+  function isAdIframe() {
+    if (window.top === window.self) return false;
+    const url = window.location.href;
+    return url.includes("media.oadts.com") && url.includes("delivery") && url.includes("afv.php");
+  }
 
-	function muteEl(v) {
-		v.muted = true;
-		v.volume = 0;
-	}
+  function muteEl(v) {
+    v.muted = true;
+    v.volume = 0;
+  }
 
-	// Videos we care about: inside the ad container (main page), or any video
-	// at all when we're running inside the legacy ad iframe.
-	function adVideos() {
-		if (isAdIframe()) return Array.from(document.querySelectorAll('video'));
-		const containers = document.querySelectorAll(AD_CONTAINER_SELECTOR);
-		const out = [];
-		containers.forEach((c) => c.querySelectorAll('video').forEach((v) => out.push(v)));
-		return out;
-	}
+  // Videos we care about: inside the ad container (main page), or any video
+  // at all when we're running inside the legacy ad iframe.
+  function adVideos() {
+    if (isAdIframe()) return Array.from(document.querySelectorAll("video"));
+    const containers = document.querySelectorAll(AD_CONTAINER_SELECTOR);
+    const out = [];
+    containers.forEach((c) => c.querySelectorAll("video").forEach((v) => out.push(v)));
+    return out;
+  }
 
-	function isNumber(n) {
-		return typeof n === 'number' && !isNaN(n) && isFinite(n);
-	}
+  function isNumber(n) {
+    return typeof n === "number" && !isNaN(n) && isFinite(n);
+  }
 
-	function skipCycle() {
-		const videos = adVideos();
-		for (const video of videos) {
-			muteEl(video);
-			const src = video.currentSrc || video.src || '';
-			if (src.includes('blank.mp4')) {
-				trace('blank video, not skipping');
-				continue;
-			}
-			if (!isNumber(video.duration) || !isNumber(video.currentTime)) {
-				trace('duration/currentTime not ready', video.duration, video.currentTime);
-				continue;
-			}
-			if (video.currentTime >= video.duration) {
-				trace('already at end');
-				continue;
-			}
-			if (video.currentTime <= settings['skipAds.minPlaytime']) {
-				trace('too soon to skip', video.currentTime);
-				continue;
-			}
-			trace('skipping to end', video.duration);
-			// Seeking past the end makes the player emit `ended`, which is what
-			// its reward handler is waiting for.
-			video.currentTime = video.duration + 1;
-		}
-		skipTimer = setTimeout(skipCycle, settings['skipAds.videoSkipPollRate']);
-	}
+  function skipCycle() {
+    const videos = adVideos();
+    for (const video of videos) {
+      muteEl(video);
+      const src = video.currentSrc || video.src || "";
+      if (src.includes("blank.mp4")) {
+        trace("blank video, not skipping");
+        continue;
+      }
+      if (!isNumber(video.duration) || !isNumber(video.currentTime)) {
+        trace("duration/currentTime not ready", video.duration, video.currentTime);
+        continue;
+      }
+      if (video.currentTime >= video.duration) {
+        trace("already at end");
+        continue;
+      }
+      if (video.currentTime <= settings["skipAds.minPlaytime"]) {
+        trace("too soon to skip", video.currentTime);
+        continue;
+      }
+      trace("skipping to end", video.duration);
+      // Seeking past the end makes the player emit `ended`, which is what
+      // its reward handler is waiting for.
+      video.currentTime = video.duration + 1;
+    }
+    skipTimer = setTimeout(skipCycle, settings["skipAds.videoSkipPollRate"]);
+  }
 
-	function startWatching() {
-		adVideos().forEach(muteEl);
-		// Mute new videos the moment they're inserted, before they can play a
-		// frame of audio — the poll loop below is too slow for that alone.
-		observer = new MutationObserver((mutations) => {
-			for (const m of mutations) {
-				for (const node of m.addedNodes) {
-					if (node.nodeName === 'VIDEO') muteEl(node);
-					if (node.querySelectorAll) node.querySelectorAll('video').forEach(muteEl);
-				}
-			}
-		});
-		observer.observe(document.documentElement, { childList: true, subtree: true });
-		skipCycle();
-	}
+  function startWatching() {
+    adVideos().forEach(muteEl);
+    // Mute new videos the moment they're inserted, before they can play a
+    // frame of audio — the poll loop below is too slow for that alone.
+    observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        for (const node of m.addedNodes) {
+          if (node.nodeName === "VIDEO") muteEl(node);
+          if (node.querySelectorAll) node.querySelectorAll("video").forEach(muteEl);
+        }
+      }
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    skipCycle();
+  }
 
-	window.TravianQoL.register({
-		id: 'skip-ads',
-		label: 'Skip builder-bonus ads',
-		description:
-			'Auto-mutes and skips the Travian video-feature ad (adventure bonus, builder bonus, daily quest). Originally by DUDSS. Settings live in the "Skip Ads" tab.',
-		init() {
-			chrome.storage.local.get(STORAGE_KEYS, (data) => {
-				settings = { ...DEFAULTS, ...data };
-				startWatching();
-			});
-		},
-		destroy() {
-			if (observer) {
-				observer.disconnect();
-				observer = null;
-			}
-			if (skipTimer) {
-				clearTimeout(skipTimer);
-				skipTimer = null;
-			}
-		},
-	});
+  window.TravianQoL.register({
+    id: "skip-ads",
+    label: "Skip builder-bonus ads",
+    description:
+      'Auto-mutes and skips the Travian video-feature ad (adventure bonus, builder bonus, daily quest). Originally by DUDSS. Settings live in the "Skip Ads" tab.',
+    init() {
+      chrome.storage.local.get(STORAGE_KEYS, (data) => {
+        settings = { ...DEFAULTS, ...data };
+        startWatching();
+      });
+    },
+    destroy() {
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+      if (skipTimer) {
+        clearTimeout(skipTimer);
+        skipTimer = null;
+      }
+    },
+  });
 })();

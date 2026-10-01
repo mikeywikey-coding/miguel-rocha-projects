@@ -1,22 +1,29 @@
 /**
- * TRAVIAN WATCHMAN PRO - ENTRY POINT
- * Version: 5.9 (Remote Fetch, Auto-Regen, Auto-Prod Fetch & Server Isolation)
+ * TravAlarm: entry point
  *
  * Load order (manifest.json):
- *   state.js → helpers.js → fetchers.js → scanners.js → ui.js → content.js
+ *   state.js → icons.js → helpers.js → fetchers.js → scanners.js → ui.js → content.js
  */
 
+// Content scripts share one global scope; see manifest.json for load order.
+/* global
+   CROP_OVERVIEW_LABEL, _firedResourceAlarms, api, calculateDelayFromSmartText,
+   checkResourceVillageAttacks, createWidget, currentAlarms, fetchCelebrationsData,
+   fetchHeroData, fetchState, fetchTrainingData, fetchWarehouseData, generateSmartBuildingName,
+   getActiveVillageName, loadShortcuts, parseSmartDuration, restoreSectionState,
+   restoreVillageColors, scan, scanResources, serverTag, syncState, tick
+*/
+/* exported
+   audioBtn, jitterMs, listContainer, timerWidget, toggleBtn
+*/
 // ==========================================
 // MESSAGE LISTENER
 // ==========================================
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "OPEN_CONTEXT_ADD") {
     let prefilled = generateSmartBuildingName();
 
-    if (
-      prefilled === CROP_OVERVIEW_LABEL ||
-      window.location.pathname.includes("dorf1.php")
-    ) {
+    if (prefilled === CROP_OVERVIEW_LABEL || window.location.pathname.includes("dorf1.php")) {
       const cropAlarms = scanResources();
 
       if (cropAlarms && cropAlarms.length > 0) {
@@ -44,9 +51,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       }
       let d = calculateDelayFromSmartText(text, sourceNode);
       if (d === null) {
-        const t = prompt(
-          "Could not auto-detect time. Enter duration (e.g. 15, 1:30):",
-        );
+        const t = prompt("Could not auto-detect time. Enter duration (e.g. 15, 1:30):");
         if (t) d = parseSmartDuration(t);
       }
       if (d !== null && d > 0) {
@@ -100,8 +105,7 @@ function checkFiredStorageAlarms() {
 
   currentAlarms.forEach((a) => {
     const isStorageAlarm =
-      STORAGE_ALARM_ICONS.some((ic) => a.name.includes(ic)) ||
-      a.customType === "storage";
+      STORAGE_ALARM_ICONS.some((ic) => a.name.includes(ic)) || a.customType === "storage";
     if (!isStorageAlarm) return;
     const uid = a.id || a.name;
     if (a.scheduledTime <= now && !_firedResourceAlarms.has(uid)) {
@@ -123,52 +127,28 @@ function checkFiredStorageAlarms() {
 }
 
 function startLoops() {
-  _activeIntervals.push(
-    setInterval(syncState, jitterMs(TIMING_INTERVALS.STATE_SYNC)),
-  );
+  _activeIntervals.push(setInterval(syncState, jitterMs(TIMING_INTERVALS.STATE_SYNC)));
   setTimeout(fetchTrainingData, jitterMs(TIMING_INTERVALS.TRAINING_INITIAL));
-  _activeIntervals.push(
-    setInterval(fetchTrainingData, jitterMs(TIMING_INTERVALS.TRAINING_REPEAT)),
-  );
+  _activeIntervals.push(setInterval(fetchTrainingData, jitterMs(TIMING_INTERVALS.TRAINING_REPEAT)));
   setTimeout(fetchWarehouseData, jitterMs(TIMING_INTERVALS.WAREHOUSE_INITIAL));
   _activeIntervals.push(
-    setInterval(
-      fetchWarehouseData,
-      jitterMs(TIMING_INTERVALS.WAREHOUSE_REPEAT),
-    ),
+    setInterval(fetchWarehouseData, jitterMs(TIMING_INTERVALS.WAREHOUSE_REPEAT)),
   );
-  setTimeout(
-    fetchCelebrationsData,
-    jitterMs(TIMING_INTERVALS.CELEBRATIONS_INITIAL),
-  );
+  setTimeout(fetchCelebrationsData, jitterMs(TIMING_INTERVALS.CELEBRATIONS_INITIAL));
   _activeIntervals.push(
-    setInterval(
-      fetchCelebrationsData,
-      jitterMs(TIMING_INTERVALS.CELEBRATIONS_REPEAT),
-    ),
+    setInterval(fetchCelebrationsData, jitterMs(TIMING_INTERVALS.CELEBRATIONS_REPEAT)),
   );
 
   // Auto-re-fetch warehouse when storage alarms expire (lightweight piggyback)
   _activeIntervals.push(
-    setInterval(
-      checkFiredStorageAlarms,
-      jitterMs(TIMING_INTERVALS.STORAGE_REGEN),
-    ),
+    setInterval(checkFiredStorageAlarms, jitterMs(TIMING_INTERVALS.STORAGE_REGEN)),
   );
-  setTimeout(
-    checkResourceVillageAttacks,
-    jitterMs(TIMING_INTERVALS.ATTACK_CHECK_INITIAL),
-  );
+  setTimeout(checkResourceVillageAttacks, jitterMs(TIMING_INTERVALS.ATTACK_CHECK_INITIAL));
   _activeIntervals.push(
-    setInterval(
-      checkResourceVillageAttacks,
-      jitterMs(TIMING_INTERVALS.ATTACK_CHECK_REPEAT),
-    ),
+    setInterval(checkResourceVillageAttacks, jitterMs(TIMING_INTERVALS.ATTACK_CHECK_REPEAT)),
   );
   setTimeout(fetchHeroData, jitterMs(TIMING_INTERVALS.HERO_INITIAL));
-  _activeIntervals.push(
-    setInterval(fetchHeroData, jitterMs(TIMING_INTERVALS.HERO_REPEAT)),
-  );
+  _activeIntervals.push(setInterval(fetchHeroData, jitterMs(TIMING_INTERVALS.HERO_REPEAT)));
   const loop = () => {
     tick();
     _rafId = requestAnimationFrame(loop);
@@ -216,6 +196,4 @@ window.addEventListener("pagehide", () => {
 
 const { timerWidget, listContainer, toggleBtn, audioBtn } = createWidget();
 loadShortcuts();
-Promise.all([restoreSectionState(), restoreVillageColors()]).then(() =>
-  startLoops(),
-);
+Promise.all([restoreSectionState(), restoreVillageColors()]).then(() => startLoops());

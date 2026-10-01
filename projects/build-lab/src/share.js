@@ -1,4 +1,4 @@
-import { attributes, baseline, normalizeBuild } from "./data.js";
+import { attributes, normalizeBuild } from "./data.js";
 
 export function parseBuildLink(text) {
   const raw = text.trim();
@@ -7,13 +7,9 @@ export function parseBuildLink(text) {
   if (url.hash.startsWith("#build="))
     return normalizeBuild(JSON.parse(decodeURIComponent(url.hash.slice(7))));
   const code = url.searchParams.get("b");
-  if (!code)
-    throw new Error(
-      "No build found. Paste a Build Lab or original builder link.",
-    );
+  if (!code) throw new Error("No build found. Paste a Build Lab or original builder link.");
   const pieces = code.split(".");
-  if (pieces.length !== 5)
-    throw new Error("The original build code has an unsupported format.");
+  if (pieces.length !== 5) throw new Error("The original build code has an unsupported format.");
   const [position, height, weight, wingspan, ratingsString] = pieces;
   const ratings = ratingsString.split("-");
   if (
@@ -24,15 +20,8 @@ export function parseBuildLink(text) {
     throw new Error("The build link has missing or invalid values.");
   return normalizeBuild({
     name: "Imported build",
-    body: {
-      position,
-      height: Number(height),
-      weight: Number(weight),
-      wingspan: Number(wingspan),
-    },
-    ratings: Object.fromEntries(
-      attributes.map((a, i) => [a.id, Number(ratings[i])]),
-    ),
+    body: { position, height: Number(height), weight: Number(weight), wingspan: Number(wingspan) },
+    ratings: Object.fromEntries(attributes.map((a, i) => [a.id, Number(ratings[i])])),
     breakers: {},
   });
 }

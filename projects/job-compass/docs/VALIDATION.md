@@ -6,7 +6,6 @@
 
 The first worker browser test accidentally reached a fictional Lever URL because Chromium did not intercept its initial extension-created navigation. No personal data was used or submitted. The test now blocks DNS for that host and reloads through fixture interception. Real employer form compatibility, user permission prompts, browser restarts and automatic submission are not certified by these tests. Automatic submission is not implemented.
 
-
 ## Unblocked preparation update — 26 September
 
 44 pytest tests and the isolated browser workflow pass. Preparation now drafts all untouched new/saved jobs without a score, qualification, skills or five-item cutoff. Missing CV files are reported in activity and still block approval. Tests cover preserved flags, general CV selection for support roles, pause behavior, missing CV drafting, archived jobs, existing edits and full batches. Submission remains manual pending the user’s separate choice.
@@ -18,7 +17,6 @@ The first worker browser test accidentally reached a fictional Lever URL because
 ## Confirmed-answer autofill — 26 September
 
 39 pytest tests pass (two existing dependency warnings). Companion and isolated workflow smoke checks pass. New tests first failed on missing approval answers and missing browser fills, then passed after implementation. Coverage includes approved-answer snapshots, access revoked after answer changes, profile links, availability, retained values, rejected non-HTTP links, skipped salary/eligibility/consent and zero submissions. JavaScript syntax passes. Employer compatibility is still fixture-tested; no live submissions or mailbox access were performed.
-
 
 ## Startup and confirmed-answer milestone — 25 September
 
@@ -44,14 +42,14 @@ On 22 September 2026, the owner configured a Google Cloud Web application OAuth 
 
 ## Checks run after the latest changes
 
-| Check | Result | What it proves |
-| --- | --- | --- |
-| `.venv\Scripts\python -m pytest -q` | 35 passed, 2 dependency deprecation warnings | Matching, source adapters including mocked ITJobs API responses, API review and dismissal controls, encrypted ITJobs key lifecycle, and mocked Gmail sync behaviour. |
-| `.venv\Scripts\python tests/workflow_smoke.py` | Passed | Isolated Brave dashboard flow, including Portuguese draft/CV selection, edit, save, approval and explicit submitted confirmation. |
-| `.venv\Scripts\python tests/browser_smoke.py` | Passed | Desktop/mobile dashboard, source directory, ITJobs key setup panel, CV links, Replies view, job detail and no browser errors. |
-| `.venv\Scripts\python tests/companion_smoke.py` | Passed | Extension loads and pairs in isolated Brave; listing extraction, URL checks and form-fill logic work on controlled fixtures. |
-| Node syntax check on `web/app.js` | Passed | Dashboard JavaScript parses. |
-| Local HTTP `/api/state` | 200 | Service is listening on loopback with seven additional browse/import sources; the dismissed newsletter is absent from Replies. |
+| Check                                           | Result                                       | What it proves                                                                                                                                                       |
+| ----------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.venv\Scripts\python -m pytest -q`             | 35 passed, 2 dependency deprecation warnings | Matching, source adapters including mocked ITJobs API responses, API review and dismissal controls, encrypted ITJobs key lifecycle, and mocked Gmail sync behaviour. |
+| `.venv\Scripts\python tests/workflow_smoke.py`  | Passed                                       | Isolated Brave dashboard flow, including Portuguese draft/CV selection, edit, save, approval and explicit submitted confirmation.                                    |
+| `.venv\Scripts\python tests/browser_smoke.py`   | Passed                                       | Desktop/mobile dashboard, source directory, ITJobs key setup panel, CV links, Replies view, job detail and no browser errors.                                        |
+| `.venv\Scripts\python tests/companion_smoke.py` | Passed                                       | Extension loads and pairs in isolated Brave; listing extraction, URL checks and form-fill logic work on controlled fixtures.                                         |
+| Node syntax check on `web/app.js`               | Passed                                       | Dashboard JavaScript parses.                                                                                                                                         |
+| Local HTTP `/api/state`                         | 200                                          | Service is listening on loopback with seven additional browse/import sources; the dismissed newsletter is absent from Replies.                                       |
 
 Four of the original eight stored jobs failed the refined eligibility rules and were archived without deletion. The six original automatic feeds showed successful responses. ITJobs is now a seventh automatic source and its first successful live check returned 36 listings, of which 9 became matches. Source counts are fetched listings, not recommendations.
 
@@ -68,7 +66,6 @@ All four English/Portuguese general/developer CV PDFs are present under ignored 
 
 The two pytest warnings come from installed FastAPI/Starlette test dependencies, not from failing assertions. No known runtime warning occurred during the successful server start.
 
-
-## Queue recovery � 28 September 2026
+## Queue recovery � 28 September 2026
 
 Companion 0.6.1 adds a 15-second timeout to application-queue dashboard requests, including submission recording. Missing form-reader reports now stop after six checks, keeping the tab open for manual inspection. Two regression tests reproduced the prior indefinite waits and pass with the fixes. All 15 Node queue/discovery tests pass; background JavaScript syntax and whitespace checks pass. No employer applications were filled or submitted during these tests. Reload is required to activate the extension update; allow the current Jobrapido discovery cycle to finish first.

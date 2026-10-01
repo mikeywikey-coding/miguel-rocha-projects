@@ -20,6 +20,8 @@ playwright-report/
 *.blend1
 .DS_Store
 Thumbs.db
+.ruff_cache/
+.pytest_cache/
 
 # Private PC Remote runtime state
 projects/pc-remote/config.json

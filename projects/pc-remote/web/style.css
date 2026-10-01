@@ -48,9 +48,17 @@
   }
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-html, body { height: 100%; overscroll-behavior: none; }
+html,
+body {
+  height: 100%;
+  overscroll-behavior: none;
+}
 
 body {
   background: var(--ground);
@@ -66,16 +74,35 @@ body {
 
 /* Nothing in the app is selectable — a long-press should never raise the
    iOS copy/paste callout over a control. */
-::selection { background: transparent; }
+::selection {
+  background: transparent;
+}
 
-button, input { font: inherit; color: inherit; -webkit-appearance: none; appearance: none; border: none; background: none; }
+button,
+input {
+  font: inherit;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  background: none;
+}
 
-button { cursor: pointer; }
+button {
+  cursor: pointer;
+}
 
-:focus { outline: none; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}
 
 .ico {
   width: 22px;
@@ -88,10 +115,18 @@ button { cursor: pointer; }
   flex: 0 0 auto;
 }
 
-.ico.solid { fill: currentColor; stroke-width: 1.4; }
+.ico.solid {
+  fill: currentColor;
+  stroke-width: 1.4;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /* ── PIN gate ───────────────────────────────────────────── */
@@ -106,7 +141,11 @@ button { cursor: pointer; }
   z-index: 50;
 }
 
-.pin-card { width: 100%; max-width: 300px; text-align: center; }
+.pin-card {
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
 
 .pin-mark {
   width: 60px;
@@ -119,7 +158,10 @@ button { cursor: pointer; }
   place-items: center;
 }
 
-.pin-mark .ico { width: 27px; height: 27px; }
+.pin-mark .ico {
+  width: 27px;
+  height: 27px;
+}
 
 .pin-card h1 {
   font: 400 30px/1.15 var(--serif);
@@ -134,7 +176,9 @@ button { cursor: pointer; }
   text-wrap: balance;
 }
 
-.pin-card p.error { color: var(--danger); }
+.pin-card p.error {
+  color: var(--danger);
+}
 
 #pinInput {
   width: 100%;
@@ -150,8 +194,12 @@ button { cursor: pointer; }
   color: var(--ink);
 }
 
-#pinInput::placeholder { color: var(--hairline-strong); }
-#pinInput:focus { border-color: var(--accent); }
+#pinInput::placeholder {
+  color: var(--hairline-strong);
+}
+#pinInput:focus {
+  border-color: var(--accent);
+}
 
 /* ── Buttons ────────────────────────────────────────────── */
 
@@ -164,8 +212,13 @@ button { cursor: pointer; }
   border-radius: var(--r-md);
 }
 
-.pin-card .btn-primary { width: 100%; margin-top: 10px; }
-.btn-primary:active { filter: brightness(0.92); }
+.pin-card .btn-primary {
+  width: 100%;
+  margin-top: 10px;
+}
+.btn-primary:active {
+  filter: brightness(0.92);
+}
 
 .btn-quiet {
   padding: 10px 16px;
@@ -176,8 +229,16 @@ button { cursor: pointer; }
   color: var(--ink);
 }
 
-.btn-quiet:active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
-.btn-quiet.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn-quiet:active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn-quiet.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
 
 .btn-danger {
   padding: 10px 16px;
@@ -196,7 +257,10 @@ button { cursor: pointer; }
   color: var(--ink-muted);
 }
 
-.icon-btn:active { background: var(--accent-soft); color: var(--accent); }
+.icon-btn:active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
 
 /* ── Shell ──────────────────────────────────────────────── */
 
@@ -207,7 +271,11 @@ button { cursor: pointer; }
   padding-top: env(safe-area-inset-top);
 }
 
-.views { flex: 1 1 auto; position: relative; min-height: 0; }
+.views {
+  flex: 1 1 auto;
+  position: relative;
+  min-height: 0;
+}
 
 .view {
   position: absolute;
@@ -220,7 +288,9 @@ button { cursor: pointer; }
   -webkit-overflow-scrolling: touch;
 }
 
-.view.active { display: flex; }
+.view.active {
+  display: flex;
+}
 
 .tabbar {
   flex: 0 0 auto;
@@ -245,14 +315,28 @@ button { cursor: pointer; }
   color: var(--ink-muted);
 }
 
-.tab .ico { width: 21px; height: 21px; }
-.tab.active { color: var(--accent); }
+.tab .ico {
+  width: 21px;
+  height: 21px;
+}
+.tab.active {
+  color: var(--accent);
+}
 
-.hint { font-size: 11.5px; color: var(--ink-muted); flex: 0 0 auto; }
+.hint {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  flex: 0 0 auto;
+}
 
 /* ── Touchpad ───────────────────────────────────────────── */
 
-.pad-wrap { flex: 1 1 auto; display: flex; gap: 10px; min-height: 190px; }
+.pad-wrap {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 10px;
+  min-height: 190px;
+}
 
 /* Recessed surface: darker than the ground, with a faint dot grid so it
    reads as a physical pad rather than an empty box. */
@@ -268,7 +352,9 @@ button { cursor: pointer; }
   display: grid;
   place-items: center;
   overflow: hidden;
-  transition: border-color 0.15s, background-color 0.15s;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
 }
 
 /* Compact pad repeated on Hotkeys and Keys, so the cursor is always
@@ -279,8 +365,13 @@ button { cursor: pointer; }
   margin-top: 8px;
 }
 
-.trackpad.pressed { border-color: var(--accent); }
-.trackpad.dragging { background-color: var(--accent-soft); border-color: var(--accent); }
+.trackpad.pressed {
+  border-color: var(--accent);
+}
+.trackpad.dragging {
+  background-color: var(--accent-soft);
+  border-color: var(--accent);
+}
 
 .trackpad-hint {
   color: var(--ink-muted);
@@ -291,8 +382,12 @@ button { cursor: pointer; }
   transition: opacity 0.4s;
 }
 
-.trackpad.mini .trackpad-hint { font-size: 11px; }
-.trackpad.used .trackpad-hint { opacity: 0; }
+.trackpad.mini .trackpad-hint {
+  font-size: 11px;
+}
+.trackpad.used .trackpad-hint {
+  opacity: 0;
+}
 
 .scroll-strip {
   flex: 0 0 44px;
@@ -306,9 +401,16 @@ button { cursor: pointer; }
   color: var(--hairline-strong);
 }
 
-.scroll-strip:active { border-color: var(--accent); color: var(--accent); }
+.scroll-strip:active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
-.click-row { flex: 0 0 auto; display: flex; gap: 8px; }
+.click-row {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+}
 
 .click-btn {
   flex: 1;
@@ -321,10 +423,18 @@ button { cursor: pointer; }
 }
 
 .click-btn:active,
-.click-btn.held { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.click-btn.held {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
 
 /* Four shortcuts that are worth reaching without leaving the pad. */
-.fav-row { flex: 0 0 auto; display: flex; gap: 8px; }
+.fav-row {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+}
 
 .fav-btn {
   flex: 1;
@@ -341,9 +451,20 @@ button { cursor: pointer; }
   font-size: 12.5px;
 }
 
-.fav-btn small { font-family: var(--mono); font-size: 9px; color: var(--ink-muted); }
-.fav-btn:active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.fav-btn:active small { color: var(--on-accent); opacity: 0.72; }
+.fav-btn small {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-muted);
+}
+.fav-btn:active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+.fav-btn:active small {
+  color: var(--on-accent);
+  opacity: 0.72;
+}
 
 .settings-row {
   flex: 0 0 auto;
@@ -355,10 +476,24 @@ button { cursor: pointer; }
   padding: 10px 2px 0;
 }
 
-.settings-row .speed { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; }
-.settings-row .speed input { flex: 1; min-width: 0; }
+.settings-row .speed {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+}
+.settings-row .speed input {
+  flex: 1;
+  min-width: 0;
+}
 
-.settings-row .checkbox { display: flex; align-items: center; gap: 7px; flex: 0 0 auto; }
+.settings-row .checkbox {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+}
 
 .settings-row input[type="checkbox"] {
   width: 17px;
@@ -370,11 +505,16 @@ button { cursor: pointer; }
 }
 
 .settings-row input[type="checkbox"]:checked {
-  background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-6'/%3E%3C/svg%3E") center/12px no-repeat;
+  background: var(--accent)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-6'/%3E%3C/svg%3E")
+    center/12px no-repeat;
   border-color: var(--accent);
 }
 
-input[type="range"] { height: 28px; background: transparent; }
+input[type="range"] {
+  height: 28px;
+  background: transparent;
+}
 
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
@@ -394,7 +534,11 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* ── Keys ───────────────────────────────────────────────── */
 
-.type-box { display: flex; gap: 8px; flex: 0 0 auto; }
+.type-box {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
 
 .type-field {
   flex: 1;
@@ -406,10 +550,18 @@ input[type="range"]::-webkit-slider-thumb {
   color: var(--ink);
 }
 
-.type-field::placeholder { color: var(--ink-muted); }
-.type-field:focus { border-color: var(--accent); }
+.type-field::placeholder {
+  color: var(--ink-muted);
+}
+.type-field:focus {
+  border-color: var(--accent);
+}
 
-.mod-row { display: flex; gap: 8px; flex: 0 0 auto; }
+.mod-row {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
 
 .mod {
   flex: 1;
@@ -421,7 +573,11 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 14px;
 }
 
-.mod.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.mod.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
 
 /* The key rows stretch to fill the screen rather than leaving dead space
    under the last row. */
@@ -443,7 +599,11 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 12.5px;
 }
 
-.key:active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.key:active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
 
 .arrows {
   display: grid;
@@ -458,11 +618,21 @@ input[type="range"]::-webkit-slider-thumb {
   min-height: 112px;
 }
 
-.arrow { font-size: 17px; }
-.arrow.up { grid-area: up; }
-.arrow.left { grid-area: left; }
-.arrow.down { grid-area: down; }
-.arrow.right { grid-area: right; }
+.arrow {
+  font-size: 17px;
+}
+.arrow.up {
+  grid-area: up;
+}
+.arrow.left {
+  grid-area: left;
+}
+.arrow.down {
+  grid-area: down;
+}
+.arrow.right {
+  grid-area: right;
+}
 
 .fn-grid {
   display: grid;
@@ -473,11 +643,20 @@ input[type="range"]::-webkit-slider-thumb {
   min-height: 80px;
 }
 
-.fn-grid .key { padding: 11px 0; font-size: 11.5px; font-family: var(--mono); }
+.fn-grid .key {
+  padding: 11px 0;
+  font-size: 11.5px;
+  font-family: var(--mono);
+}
 
 /* ── Hotkeys ────────────────────────────────────────────── */
 
-.page-tab-row { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.page-tab-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
 
 .page-tabs {
   display: flex;
@@ -501,7 +680,11 @@ input[type="range"]::-webkit-slider-thumb {
   text-overflow: ellipsis;
 }
 
-.page-tab.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.page-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
 
 .pill-btn {
   flex: 0 0 auto;
@@ -513,7 +696,11 @@ input[type="range"]::-webkit-slider-thumb {
   color: var(--ink);
 }
 
-.pill-btn.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.pill-btn.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
 
 .hotkey-grid {
   display: grid;
@@ -549,8 +736,15 @@ input[type="range"]::-webkit-slider-thumb {
   word-break: break-all;
 }
 
-.hotkey-btn:active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.hotkey-btn:active small { color: var(--on-accent); opacity: 0.72; }
+.hotkey-btn:active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+.hotkey-btn:active small {
+  color: var(--on-accent);
+  opacity: 0.72;
+}
 
 .hotkey-grid.editing .hotkey-btn {
   border-style: dashed;
@@ -562,14 +756,20 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 @keyframes nudge {
-  from { transform: rotate(-0.45deg); }
-  to { transform: rotate(0.45deg); }
+  from {
+    transform: rotate(-0.45deg);
+  }
+  to {
+    transform: rotate(0.45deg);
+  }
 }
 
 /* While something is being dragged the nudge has to stop everywhere: it
    animates `transform`, and a running animation outranks the inline transform
    that follows the finger. Must stay after the .editing rule to win on order. */
-.hotkey-grid.reordering .hotkey-btn { animation: none; }
+.hotkey-grid.reordering .hotkey-btn {
+  animation: none;
+}
 
 /* Three classes, so this beats `.hotkey-grid.editing .hotkey-btn` on borders. */
 .hotkey-grid .hotkey-btn.dragging {
@@ -581,7 +781,10 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow: 0 8px 20px rgba(35, 33, 30, 0.28);
 }
 
-.hotkey-grid .hotkey-btn.dragging small { color: var(--on-accent); opacity: 0.72; }
+.hotkey-grid .hotkey-btn.dragging small {
+  color: var(--on-accent);
+  opacity: 0.72;
+}
 
 .hotkey-btn.add {
   background: transparent;
@@ -609,7 +812,10 @@ input[type="range"]::-webkit-slider-thumb {
   justify-content: center;
 }
 
-.panel.playback { flex: 1.1 1 0; min-height: 132px; }
+.panel.playback {
+  flex: 1.1 1 0;
+  min-height: 132px;
+}
 
 .panel-title {
   font-size: 10.5px;
@@ -620,7 +826,12 @@ input[type="range"]::-webkit-slider-thumb {
   margin-bottom: 13px;
 }
 
-.media-row { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.media-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+}
 
 .media-btn {
   width: 56px;
@@ -633,7 +844,10 @@ input[type="range"]::-webkit-slider-thumb {
   color: var(--ink);
 }
 
-.media-btn .ico { width: 21px; height: 21px; }
+.media-btn .ico {
+  width: 21px;
+  height: 21px;
+}
 
 .media-btn.primary {
   width: 70px;
@@ -643,14 +857,34 @@ input[type="range"]::-webkit-slider-thumb {
   color: var(--on-accent);
 }
 
-.media-btn.primary .ico { width: 26px; height: 26px; }
-.media-btn:active { filter: brightness(0.93); }
+.media-btn.primary .ico {
+  width: 26px;
+  height: 26px;
+}
+.media-btn:active {
+  filter: brightness(0.93);
+}
 
-.vol-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-#muteBtn { margin-left: 0; color: var(--ink); }
-#muteBtn .when-muted { display: none; }
-#muteBtn.muted .when-live { display: none; }
-#muteBtn.muted .when-muted { display: block; color: var(--danger); }
+.vol-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+#muteBtn {
+  margin-left: 0;
+  color: var(--ink);
+}
+#muteBtn .when-muted {
+  display: none;
+}
+#muteBtn.muted .when-live {
+  display: none;
+}
+#muteBtn.muted .when-muted {
+  display: block;
+  color: var(--danger);
+}
 
 .vol-label {
   margin-left: auto;
@@ -660,13 +894,30 @@ input[type="range"]::-webkit-slider-thumb {
   color: var(--ink-muted);
 }
 
-.vol-slider { width: 100%; }
-.vol-steps { display: flex; gap: 8px; margin-top: 8px; }
-.vol-steps .btn-quiet { flex: 1; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.vol-slider {
+  width: 100%;
+}
+.vol-steps {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.vol-steps .btn-quiet {
+  flex: 1;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
 
 /* Two rows of equal buttons — no orphaned empty cell. */
-.power-rows { display: flex; flex-direction: column; gap: 8px; }
-.power-row { display: flex; gap: 8px; }
+.power-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.power-row {
+  display: flex;
+  gap: 8px;
+}
 
 .power-btn {
   flex: 1;
@@ -677,11 +928,24 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 12.5px;
 }
 
-.power-btn.danger { color: var(--danger); }
-.power-btn:active { filter: brightness(0.95); }
-.power-btn.confirm { background: var(--danger); border-color: var(--danger); color: var(--on-accent); }
+.power-btn.danger {
+  color: var(--danger);
+}
+.power-btn:active {
+  filter: brightness(0.95);
+}
+.power-btn.confirm {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-accent);
+}
 
-.disconnect { margin-top: 10px; align-self: flex-start; font-size: 12.5px; color: var(--ink-muted); }
+.disconnect {
+  margin-top: 10px;
+  align-self: flex-start;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
 
 /* ── Edit sheet ─────────────────────────────────────────── */
 
@@ -706,9 +970,16 @@ input[type="range"]::-webkit-slider-thumb {
   gap: 15px;
 }
 
-.sheet-panel h2 { font: 400 21px/1.2 var(--serif); }
+.sheet-panel h2 {
+  font: 400 21px/1.2 var(--serif);
+}
 
-.field, .field-stack { display: flex; flex-direction: column; gap: 7px; }
+.field,
+.field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
 
 .field-label {
   font-size: 10.5px;
@@ -727,10 +998,17 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 15px;
 }
 
-.field input::placeholder { color: var(--ink-muted); }
-.field input:focus { border-color: var(--accent); }
+.field input::placeholder {
+  color: var(--ink-muted);
+}
+.field input:focus {
+  border-color: var(--accent);
+}
 
-.preview { font-size: 12.5px; color: var(--ink-muted); }
+.preview {
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
 
 .preview code {
   font-family: var(--mono);
@@ -741,12 +1019,22 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 5px;
 }
 
-.sheet-actions { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
-.sheet-actions .btn-primary { flex: 1; }
+.sheet-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 2px;
+}
+.sheet-actions .btn-primary {
+  flex: 1;
+}
 
 /* ── Alt+Tab switcher ───────────────────────────────────── */
 
-.switch-row { display: flex; gap: 8px; }
+.switch-row {
+  display: flex;
+  gap: 8px;
+}
 
 .switch-btn {
   flex: 1;
@@ -759,7 +1047,11 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 15px;
 }
 
-.switch-btn:active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.switch-btn:active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
 
 /* ── Toast ──────────────────────────────────────────────── */
 
@@ -775,10 +1067,15 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 13px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s, transform 0.2s;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
   z-index: 60;
   max-width: 82vw;
   text-align: center;
 }
 
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}

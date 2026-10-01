@@ -1,15 +1,24 @@
 /**
- * TRAVIAN WATCHMAN PRO - SCANNERS
+ * TravAlarm: scanners
  */
 
+// Content scripts share one global scope; see manifest.json for load order.
+/* global
+   STORAGE_THRESHOLD, api, cleanCoords, cleanText, currentAlarms, fetchCelebrationsData,
+   fetchProductionData, fetchTrainingData, fetchWarehouseData, getResourceValue,
+   globalVillageMap, isScanning:writable, parseSmartDuration, scanForSidebarAttacksAndFetch,
+   serverTag, timerWidget
+*/
+/* exported
+   getActiveVillageName, scan, scanResources
+*/
 // ==========================================
 // SCAN UTILITIES
 // ==========================================
 
 /** Extracts a village name from a table row, checking .vil then td:first-child. */
 function getVillageNameFromRow(row) {
-  const vilCell =
-    row.querySelector(".vil") || row.querySelector("td:first-child");
+  const vilCell = row.querySelector(".vil") || row.querySelector("td:first-child");
   if (!vilCell) return "Village";
   const a = vilCell.querySelector("a");
   return cleanText((a ?? vilCell).innerText);
@@ -23,8 +32,7 @@ function isResourcesPage() {
   const search = window.location.search;
   return (
     href.includes("/village/statistics/resources") ||
-    (href.includes("dorf3.php") &&
-      (search.includes("s=0") || !search.includes("s=")))
+    (href.includes("dorf3.php") && (search.includes("s=0") || !search.includes("s=")))
   );
 }
 
@@ -50,13 +58,12 @@ function scan() {
 
   if (typeof timerWidget !== "undefined" && timerWidget) {
     const isMap = window.location.pathname.includes("karte.php");
-    const isFull =
-      new URLSearchParams(window.location.search).get("fullscreen") === "1";
+    const isFull = new URLSearchParams(window.location.search).get("fullscreen") === "1";
     timerWidget.style.display = isMap && isFull ? "none" : "";
   }
 
   try {
-    const villageMap = scanVillages();
+    scanVillages();
     const activeVillage = getActiveVillageName();
     const found = [];
     let matchedBuildingIds = null;
@@ -81,8 +88,7 @@ function scan() {
       "/village/statistics/troops/training",
     );
     const isTrainingBuildingPage =
-      window.location.pathname.includes("build.php") &&
-      !!document.querySelector(".trainBuilding");
+      window.location.pathname.includes("build.php") && !!document.querySelector(".trainBuilding");
     if (isTrainingStatsPage || isTrainingBuildingPage) {
       tryScan(fetchTrainingData);
     }
@@ -96,17 +102,17 @@ function scan() {
     // Celebrations on-page trigger
     const isCpPage =
       window.location.href.includes("/village/statistics/culturepoints") ||
-      (window.location.href.includes("dorf3.php") &&
-        window.location.search.includes("s=2"));
+      (window.location.href.includes("dorf3.php") && window.location.search.includes("s=2"));
     if (isCpPage) tryScan(fetchCelebrationsData);
 
     // Storage on-page trigger
     if (isResourcesPage()) tryScan(fetchWarehouseData);
 
     if (matchedBuildingIds) handleQueueCleanup(matchedBuildingIds, activeVillage);
-    if (found.length > 0)
-      api.runtime.sendMessage({ type: "REFRESH_ALARMS", buildings: found });
-  } catch {}
+    if (found.length > 0) api.runtime.sendMessage({ type: "REFRESH_ALARMS", buildings: found });
+  } catch {
+    // Travian pages vary between servers and versions; a failed scan must never break the page.
+  }
 }
 
 // ==========================================
@@ -123,57 +129,37 @@ function scanProduction(activeVillage) {
   rows.forEach((row) => {
     const numCell = row.querySelector(".num");
     if (numCell) {
-      const val = parseInt(
-        numCell.innerText.replace("−", "-").replace(/[^0-9-]/g, ""),
-        10,
-      );
+      const val = parseInt(numCell.innerText.replace("−", "-").replace(/[^0-9-]/g, ""), 10);
       if (!isNaN(val)) {
         total += val;
-        if (row.querySelector(".r1") || row.querySelector(".wood"))
-          prodMap.w = val;
-        else if (row.querySelector(".r2") || row.querySelector(".clay"))
-          prodMap.c = val;
-        else if (row.querySelector(".r3") || row.querySelector(".iron"))
-          prodMap.i = val;
-        else if (row.querySelector(".r4") || row.querySelector(".crop"))
-          prodMap.cr = val;
+        if (row.querySelector(".r1") || row.querySelector(".wood")) prodMap.w = val;
+        else if (row.querySelector(".r2") || row.querySelector(".clay")) prodMap.c = val;
+        else if (row.querySelector(".r3") || row.querySelector(".iron")) prodMap.i = val;
+        else if (row.querySelector(".r4") || row.querySelector(".crop")) prodMap.cr = val;
       }
     }
   });
   if (activeVillage) {
     localStorage.setItem(`_wpt_${serverTag}_${activeVillage}`, total);
-    localStorage.setItem(
-      `_wpm_${serverTag}_${activeVillage}`,
-      JSON.stringify(prodMap),
-    );
+    localStorage.setItem(`_wpm_${serverTag}_${activeVillage}`, JSON.stringify(prodMap));
   }
 }
 
 function scanNPCBuild(activeVillage) {
   const url = window.location.href.toLowerCase();
   if (url.includes("report") || url.includes("berichte.php")) return;
-  const costWrappers = Array.from(document.querySelectorAll(
-    ".resourceWrapper, .contractCosts, .showCosts",
-  )).filter(el => !el.closest('.dialog'));
+  const costWrappers = Array.from(
+    document.querySelectorAll(".resourceWrapper, .contractCosts, .showCosts"),
+  ).filter((el) => !el.closest(".dialog"));
   if (costWrappers.length === 0) return;
 
-  const l1 = parseInt(
-    document.getElementById("l1")?.innerText.replace(/\D/g, "") || "0",
-  );
-  const l2 = parseInt(
-    document.getElementById("l2")?.innerText.replace(/\D/g, "") || "0",
-  );
-  const l3 = parseInt(
-    document.getElementById("l3")?.innerText.replace(/\D/g, "") || "0",
-  );
-  const l4 = parseInt(
-    document.getElementById("l4")?.innerText.replace(/\D/g, "") || "0",
-  );
+  const l1 = parseInt(document.getElementById("l1")?.innerText.replace(/\D/g, "") || "0");
+  const l2 = parseInt(document.getElementById("l2")?.innerText.replace(/\D/g, "") || "0");
+  const l3 = parseInt(document.getElementById("l3")?.innerText.replace(/\D/g, "") || "0");
+  const l4 = parseInt(document.getElementById("l4")?.innerText.replace(/\D/g, "") || "0");
   const currentTotal = l1 + l2 + l3 + l4;
 
-  const prodTotalRaw = localStorage.getItem(
-    `_wpt_${serverTag}_${activeVillage}`,
-  );
+  const prodTotalRaw = localStorage.getItem(`_wpt_${serverTag}_${activeVillage}`);
   const prodTotal = parseInt(prodTotalRaw || "0", 10);
 
   if (!prodTotalRaw) {
@@ -196,10 +182,7 @@ function scanNPCBuild(activeVillage) {
     }
 
     let sibling = wrapper.nextElementSibling;
-    while (
-      sibling &&
-      (sibling.tagName === "INPUT" || sibling.classList.contains("clear"))
-    ) {
+    while (sibling && (sibling.tagName === "INPUT" || sibling.classList.contains("clear"))) {
       sibling = sibling.nextElementSibling;
     }
 
@@ -213,18 +196,12 @@ function scanNPCBuild(activeVillage) {
     ) {
       durationNode = sibling;
       sibling = sibling.nextElementSibling;
-      while (
-        sibling &&
-        (sibling.tagName === "INPUT" || sibling.classList.contains("clear"))
-      ) {
+      while (sibling && (sibling.tagName === "INPUT" || sibling.classList.contains("clear"))) {
         sibling = sibling.nextElementSibling;
       }
     }
     if (sibling) {
-      if (
-        sibling.classList.contains("errorMessage") ||
-        sibling.classList.contains("infoMessage")
-      ) {
+      if (sibling.classList.contains("errorMessage") || sibling.classList.contains("infoMessage")) {
         infoNode = sibling;
       } else if (sibling.querySelector) {
         infoNode = sibling.querySelector(".errorMessage, .infoMessage");
@@ -261,9 +238,7 @@ function scanNPCBuild(activeVillage) {
     } else {
       const target = durationNode || wrapper;
       if (target && target.parentNode) {
-        target.parentNode
-          .querySelectorAll("._w-nm")
-          .forEach((el) => el.remove());
+        target.parentNode.querySelectorAll("._w-nm").forEach((el) => el.remove());
       }
     }
 
@@ -274,10 +249,7 @@ function scanNPCBuild(activeVillage) {
       span.innerText = `${msg}`;
       let inserted = false;
       for (const node of infoNode.childNodes) {
-        if (
-          node.nodeType === 3 &&
-          node.textContent.includes("Enough resources")
-        ) {
+        if (node.nodeType === 3 && node.textContent.includes("Enough resources")) {
           infoNode.insertBefore(span, node.nextSibling);
           inserted = true;
           break;
@@ -338,10 +310,7 @@ function scanResources() {
       const alarmName = `${icon} ${name} | ${vName} ${serverTag}`;
       const newScheduledTime = Date.now() + delay;
       currentAlarms.forEach((a) => {
-        if (
-          a.name === alarmName &&
-          Math.abs(a.scheduledTime - newScheduledTime) > 10000
-        ) {
+        if (a.name === alarmName && Math.abs(a.scheduledTime - newScheduledTime) > 10000) {
           api.runtime.sendMessage({
             type: "DELETE_ALARM",
             id: a.id,
@@ -400,8 +369,7 @@ function scanResources() {
     resTypes.forEach((type) => {
       let cell = row.querySelector(type.selectors[0]);
       if (!cell) cell = row.querySelector(type.selectors[1]);
-      if (!cell && !row.querySelector(".lum"))
-        cell = row.querySelector(type.selectors[2]);
+      if (!cell && !row.querySelector(".lum")) cell = row.querySelector(type.selectors[2]);
       if (cell) {
         processResourceRow(vName, cell, type.icon, type.name, "resource");
       }
@@ -437,9 +405,7 @@ function performResourceCleanup(scannedVillages, newAlarms) {
 
 function scanVillages() {
   const map = {};
-  const items = document.querySelectorAll(
-    ".villageList li, .villageList .listEntry",
-  );
+  const items = document.querySelectorAll(".villageList li, .villageList .listEntry");
   items.forEach((item) => {
     const nameNode = item.querySelector(".name");
     const coordNode =
@@ -488,9 +454,7 @@ function scanBuildings(activeVillage) {
     if (!t || row.classList.contains("masterBuilder")) return;
     const txt = row.innerText;
     const match = txt.match(/(.*?)\s+Level\s+(\d+)/i);
-    const bName = match
-      ? cleanText(match[1])
-      : cleanText(txt.split("Level")[0]);
+    const bName = match ? cleanText(match[1]) : cleanText(txt.split("Level")[0]);
     const bLevel = match ? match[2].trim() : "";
     const delayValue = (t.getAttribute("value") | 0) * 1000 + 1700;
     rawBuildings.push({
@@ -507,8 +471,7 @@ function scanBuildings(activeVillage) {
     if (!nameCounts[b.baseName]) nameCounts[b.baseName] = 0;
     nameCounts[b.baseName]++;
     let finalName = b.baseName;
-    if (nameCounts[b.baseName] > 1)
-      finalName = `${b.baseName} #${nameCounts[b.baseName]}`;
+    if (nameCounts[b.baseName] > 1) finalName = `${b.baseName} #${nameCounts[b.baseName]}`;
     return { ...b, name: finalName };
   });
   const newAlarms = [];
@@ -522,8 +485,7 @@ function scanBuildings(activeVillage) {
       if (a.name.startsWith(pb.baseName)) return true;
       const looseStart = `${pb.bName} lvl `;
       const looseEnd = `(${activeVillage}) ${serverTag}`;
-      if (a.name.startsWith(looseStart) && a.name.includes(looseEnd))
-        return true;
+      if (a.name.startsWith(looseStart) && a.name.includes(looseEnd)) return true;
       return false;
     });
     if (bestMatch) {
@@ -546,17 +508,7 @@ function scanBuildings(activeVillage) {
 }
 
 // Emojis used in non-building alarm types — skip these during building queue cleanup
-const NON_BUILDING_EMOJIS = [
-  "⚠️",
-  "⚔️",
-  "⭐",
-  "🌾",
-  "📦",
-  "🪵",
-  "🧱",
-  "🔩",
-  "🎓",
-];
+const NON_BUILDING_EMOJIS = ["⚠️", "⚔️", "⭐", "🌾", "📦", "🪵", "🧱", "🔩", "🎓"];
 
 // Settler/Chieftain ("expansion units") training only appears on the
 // Residence/Palace build page, inside `.trainExpansionUnits` — never on the
@@ -581,9 +533,7 @@ function scanSettlerTraining(activeVillage) {
   if (maxSeconds > 0) {
     api.runtime.sendMessage({
       type: "REFRESH_ALARMS",
-      buildings: [
-        { name: alarmName, delay: maxSeconds * 1000, customType: "settler" },
-      ],
+      buildings: [{ name: alarmName, delay: maxSeconds * 1000, customType: "settler" }],
     });
     return;
   }
@@ -607,8 +557,7 @@ function handleQueueCleanup(matchedIds, activeVillage) {
   currentAlarms.forEach((a) => {
     if (NON_BUILDING_EMOJIS.some((e) => a.name.includes(e))) return;
     if (a.customType === "training" || a.customType === "storage") return;
-    if (!a.name.includes(`(${activeVillage})`) || !a.name.includes(serverTag))
-      return;
+    if (!a.name.includes(`(${activeVillage})`) || !a.name.includes(serverTag)) return;
     if (matchedIds.has(a.id || a.name)) return;
     if (a.scheduledTime - now > 10000) {
       api.runtime.sendMessage({ type: "DELETE_ALARM", id: a.id, name: a.name });

@@ -1,18 +1,21 @@
 /**
- * TRAVIAN WATCHMAN PRO - STATE & CONFIGURATION
+ * TravAlarm: state & configuration
  */
 
-/* global browser, chrome */
-
+// Content scripts share one global scope; see manifest.json for load order.
+/* exported
+   DEFAULT_SHORTCUTS, _firedResourceAlarms, acknowledgedSirens, api, cleanCoords, cleanText,
+   collapsedSections, currentAlarms, escapeHtml, expandedSections, fetchState, firstSeenTimes,
+   globalVillageMap, isFetchingRally, isScanning, lastRallyFetchTime, serverTag,
+   silencedAlarms, suppressedAttacks, tooltipEl, uiRefs, villageColorSlots
+*/
 // Universal API shim (browser for Firefox, chrome for Chrome/MV3)
 const api = typeof browser !== "undefined" ? browser : chrome;
 
 // ==========================================
 // CONFIGURATION & STATE
 // ==========================================
-let lastNamesKey = "";
 let silencedAlarms = new Set();
-let localTracked = new Set();
 let currentAlarms = [];
 
 // "suppressedAttacks" tracks deleted Sirens (🚨)
@@ -51,9 +54,7 @@ let _firedResourceAlarms = new Set();
 // SERVER TAG GENERATION
 // ==========================================
 const generateServerTag = () => {
-  const host = window.location.hostname
-    .replace(/^www\./, "")
-    .replace(/\.travian\.[a-z]+$/, "");
+  const host = window.location.hostname.replace(/^www\./, "").replace(/\.travian\.[a-z]+$/, "");
 
   const regionShorteners = {
     europe: "eur",
@@ -86,5 +87,8 @@ const DEFAULT_SHORTCUTS = [
 
 const cleanText = (str) => str.replace(/\s+/g, " ").trim();
 const cleanCoords = (str) => str.replace(/[^\d|−-]/g, "").replace("−", "-");
-const cleanNumber = (str) =>
-  parseInt(str.replace("−", "-").replace(/[^\d-]/g, ""), 10);
+const escapeHtml = (str) =>
+  String(str).replace(
+    /[&<>"']/g,
+    (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch],
+  );

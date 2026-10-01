@@ -4,6 +4,7 @@ A spec such as ``ctrl+shift+s`` becomes a list of modifier names plus one key.
 Names are the attribute names pynput uses on ``pynput.keyboard.Key``; a single
 character (``c``, ``7``, ``/``) is typed as itself.
 """
+
 from __future__ import annotations
 
 MAX_SPEC_LENGTH = 64
