@@ -8,7 +8,9 @@
       "paths": ["projects/build-lab", "projects/workout-tracker", "extensions"],
       "files": 517,
       "updated": "2026-10-01",
-      "notes": "Kept identical to miguel-rocha-portfolio, including its lint, format and CI configuration."
+      "notes": "Original snapshot included extensions. Extension copies were removed on 2026-10-04 and replaced with links to https://github.com/mikeywikey-coding/travian-extensions. Build Lab and Workout Tracker remain portfolio copies.",
+      "removed_paths": ["extensions"],
+      "removed_on": "2026-10-04"
     },
     {
       "source": "job-compass",
@@ -25,6 +27,13 @@
       "files": 20,
       "added": "2026-09-30",
       "updated": "2026-10-01"
+    }
+  ],
+  "external_projects": [
+    {
+      "name": "Travian Extensions",
+      "url": "https://github.com/mikeywikey-coding/travian-extensions",
+      "maintenance": "Every extension change is always published here; no portfolio copies."
     }
   ]
 }

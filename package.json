@@ -6,7 +6,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --test \"extensions/tests/*.test.mjs\" \"projects/workout-tracker/tests/*.test.mjs\""
+    "test": "node --test \"projects/workout-tracker/tests/*.test.mjs\""
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
