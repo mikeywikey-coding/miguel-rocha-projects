@@ -1,9 +1,11 @@
 """Bounded collection of public listings; never treat a challenge as an empty feed."""
 
+import asyncio
 import json
 import re
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import quote, quote_plus, urljoin, urlsplit
 
+import httpx
 from bs4 import BeautifulSoup
 
 from .engine import canonical_url, plain
@@ -13,33 +15,98 @@ URLS = {
     "linkedin": [
         "https://www.linkedin.com/jobs/search/?keywords=junior%20developer&location=Lisbon%2C%20Portugal",
         "https://www.linkedin.com/jobs/search/?keywords=technical%20support&location=Lisbon%2C%20Portugal",
+        "https://www.linkedin.com/jobs/search/?keywords=internship&location=Lisbon%2C%20Portugal",
+        "https://www.linkedin.com/jobs/search/?keywords=est%C3%A1gio&location=Lisbon%2C%20Portugal",
+        # Trainee and graduate programmes are entry routes too.
+        "https://www.linkedin.com/jobs/search/?keywords=trainee&location=Lisbon%2C%20Portugal",
+        "https://www.linkedin.com/jobs/search/?keywords=graduate%20program&location=Lisbon%2C%20Portugal",
+    ]
+    +
+    # The further areas chosen in Settings: customer service, content and ads operations, sales, back office, marketing.
+    [
+        f"https://www.linkedin.com/jobs/search/?keywords={quote(q)}&location=Lisbon%2C%20Portugal"
+        for q in (
+            "customer service",
+            "content moderator",
+            "sales development representative",
+            "back office",
+            "portuguese speaker",
+            "digital marketing",
+        )
     ],
     "netempregos": [
-        f"https://www.net-empregos.com/pesquisa-empregos.asp?chaves={q}&cidade=Lisboa"
-        for q in ("junior", "informatica", "helpdesk")
+        f"https://www.net-empregos.com/pesquisa-empregos.asp?chaves={quote_plus(q)}&cidade=Lisboa"
+        for q in (
+            "junior",
+            "informatica",
+            "helpdesk",
+            "estagio",
+            "apoio ao cliente",
+            "administrativo",
+        )
     ],
     "teamlyzer": [
         "https://pt.teamlyzer.com/companies/jobs?address=lisboa&q=junior",
         "https://pt.teamlyzer.com/companies/jobs?address=lisboa&q=support",
+        "https://pt.teamlyzer.com/companies/jobs?address=lisboa&q=trainee",
     ],
     "landing": ["https://landing.jobs/jobs"],
     "randstad": [
         f"https://www.randstad.pt/empregos/q-{q}/"
-        for q in ("junior", "helpdesk", "developer")
+        for q in (
+            "junior",
+            "helpdesk",
+            "developer",
+            "apoio-ao-cliente",
+            "administrativo",
+            "backoffice",
+            "comercial",
+        )
     ],
     "portalemprego": [
         f"https://www.portalemprego.pt/anuncios/pesquisa-{q}/mostrar-20/"
-        for q in ("junior", "informatica", "helpdesk")
+        for q in (
+            "junior",
+            "informatica",
+            "helpdesk",
+            "estagio",
+            "administrativo",
+            "atendimento",
+            "comercial",
+        )
     ],
+    # The site's IT category page is empty; its search path is /emprego/pesquisa/{query}/{location}.
     "expresso": [
-        "https://expressoemprego.pt/emprego/tecnologias-informacao?order=data"
+        f"https://expressoemprego.pt/emprego/pesquisa/{q}/lisboa?order=data"
+        for q in (
+            "informatica",
+            "junior",
+            "suporte",
+            "estagio",
+            "administrativo",
+            "atendimento",
+            "comercial",
+        )
     ],
     "sapo": ["https://emprego.sapo.pt/"],
     "iefp": [
         "https://iefponline.iefp.pt/IEFP/pesquisas/search.do?cat=ofertaEmprego&text=programador",
         "https://iefponline.iefp.pt/IEFP/pesquisas/search.do?cat=ofertaEmprego&text=informatica",
+        # Paid professional internships (Estágios ATIVAR.PT), nationwide: the matcher keeps the Lisbon area.
+        "https://iefponline.iefp.pt/IEFP/pesquisas/search.do?cat=ofertaEstagio&text=programador&resultsPerPage=50",
+        "https://iefponline.iefp.pt/IEFP/pesquisas/search.do?cat=ofertaEstagio&text=informatica&resultsPerPage=50",
     ],
 }
+# LinkedIn answers "429 Too Many Requests" to about ten quick searches in a row: space them out.
+PAUSE = {"linkedin": 4}
+ADECCO_QUERIES = (
+    "junior",
+    "helpdesk",
+    "developer",
+    "apoio ao cliente",
+    "administrativo",
+    "comercial",
+)
 
 
 class SourceReadError(ValueError):
@@ -123,6 +190,38 @@ def parse_listings(ident, html):
                     row.get("url"),
                     row.get("datePosted", ""),
                 )
+        if not jobs:
+            for card in soup.select(".jobcard__body"):
+                link = card.select_one("a.jobcard__title-link[href]")
+                if not link:
+                    continue
+                tags = ", ".join(
+                    t.get_text(strip=True) for t in card.select(".jobcard__tag")
+                )
+                salary = (
+                    text(card, ".jobcard__salary")
+                    .replace(text(card, ".jobcard__salary-label"), "")
+                    .strip()
+                )
+                level = text(card, ".jobcard__seniority")
+                description = ". ".join(
+                    filter(
+                        None,
+                        [
+                            text(card, ".role-tag"),
+                            level and "Seniority: " + level,
+                            tags,
+                            salary,
+                        ],
+                    )
+                )
+                add(
+                    link.get_text(),
+                    text(card, ".jobcard__company"),
+                    text(card, ".jobcard__location"),
+                    description,
+                    link["href"],
+                )
     elif ident == "linkedin":
         for card in soup.select(".base-search-card"):
             link = card.select_one("a.base-card__full-link[href]")
@@ -197,10 +296,11 @@ def parse_listings(ident, html):
         for card in soup.select(".cards__item"):
             link = card.select_one("a.cards__link[href]")
             if link:
+                # "porto, lisboa": the town, then the region of the Randstad branch that posted it, not of the job.
                 add(
                     link.get_text(),
                     "Randstad",
-                    text(card, ".cards__meta-item"),
+                    text(card, ".cards__meta-item").split(",")[0],
                     text(card, ".cards__description"),
                     link["href"],
                     text(card, ".cards__date"),
@@ -220,14 +320,16 @@ def parse_listings(ident, html):
     elif ident == "expresso":
         for card in soup.select("div[onclick]"):
             link = card.select_one("h3 a[href]")
-            if link and re.search(r"/emprego/[^/]+/\d+$", link["href"]):
+            if link and re.search(r"/emprego/(?:[^/]+/)+\d+$", link["href"]):
+                # "02.10.2026 | Lisboa, Portugal"
+                posted, _, location = text(card, "span.colorBlack").partition("|")
                 add(
                     link.get_text(),
                     text(card, "h4"),
-                    "",
+                    location.strip(),
                     text(card, "div.hidden-xs"),
                     link["href"],
-                    text(card, "span.colorBlack").strip("| "),
+                    posted.strip(),
                 )
     elif ident == "sapo":
         for card in soup.select("article"):
@@ -244,11 +346,17 @@ def parse_listings(ident, html):
         for card in soup.select("article.card-oferta"):
             link = card.select_one('a[href*="detalheOfertas"]')
             if link:
+                # Internship offers name only the occupation ("Programador de Software"): say what they are.
+                kind = (
+                    "Seniority: Estágio profissional (IEFP). "
+                    if "detalheOfertasEstagio" in link["href"]
+                    else ""
+                )
                 add(
                     text(card, ".card-header strong"),
                     "",
                     text(card, ".card-body .row-flex strong").replace("---", ""),
-                    text(card, ".card-body"),
+                    kind + text(card, ".card-body"),
                     urljoin("https://iefponline.iefp.pt/", link["href"]),
                 )
     if not jobs:
@@ -293,7 +401,7 @@ async def fetch_public(source, client):
     ident = source["id"]
     if ident == "adecco":
         jobs = {}
-        for query in ("junior", "helpdesk", "developer"):
+        for query in ADECCO_QUERIES:
             response = await client.post(
                 "https://www.adecco.com/api/data/jobs/summarized",
                 json=dict(
@@ -335,8 +443,30 @@ async def fetch_public(source, client):
     if ident not in URLS:
         raise SourceReadError("No verified automatic collector for this source")
     jobs = {}
-    for url in URLS[ident]:
-        for job in parse_listings(ident, await read_page(client, url)):
+    empty = 0
+    for index, url in enumerate(URLS[ident]):
+        if index and PAUSE.get(ident):
+            await asyncio.sleep(PAUSE[ident])
+        try:
+            html = await read_page(
+                client, url
+            )  # a redirect away or an HTTP error still fails the whole source
+        except httpx.HTTPStatusError as exc:
+            # Rate limited after some searches were read: keep those; the next check starts again from the first.
+            if exc.response.status_code == 429 and jobs:
+                break
+            raise
+        try:
+            found = parse_listings(ident, html)
+        except SourceReadError:
+            # One search with no results today (Portal Emprego "helpdesk") is not a broken source.
+            empty += 1
+            continue
+        for job in found:
             job["source"] = source["name"]
             jobs[job["url"]] = job
+    if empty == len(URLS[ident]):
+        raise SourceReadError(
+            "No readable listings found; the page may have changed or require browser access"
+        )
     return list(jobs.values())

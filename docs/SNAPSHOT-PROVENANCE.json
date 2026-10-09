@@ -17,8 +17,8 @@
       "commit": "2589f7f469afa0f969612ca34d77f2e0a4c60c91",
       "destination": "projects/job-compass",
       "files": 56,
-      "updated": "2026-09-28",
-      "notes": "Formatted with Black and Prettier here on 2026-10-01, with two regular-expression escapes and one unused variable removed. The README describes a clean checkout."
+      "updated": "2026-10-09",
+      "notes": "Formatted with Black and Prettier here on 2026-10-01, with two regular-expression escapes and one unused variable removed. The README describes a clean checkout. On 2026-10-09 the matcher (app/engine.py), board searches (app/public_sources.py) and their tests were brought up to date from job-compass commit 6efff4d: optional further search areas, closed wording gaps in IT and support titles, and LinkedIn searches spaced against rate limits."
     },
     {
       "source": "pcremote",
