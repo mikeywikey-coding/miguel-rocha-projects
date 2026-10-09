@@ -761,3 +761,18 @@ def test_jobs_the_areas_must_not_pull_in():
     assert not assess(
         job("Member of Client Experience, CXM", location="Remote · Singapore"), profile
     )["eligible"]
+
+
+def test_counter_and_table_service_is_not_customer_support():
+    for title in (
+        "Empregado de Balcão / Atendimento Cliente (M/F) Lisboa Part-Time 30h",
+        "Barista",
+        "Operador de Caixa - Lisboa",
+        "Empregada de Mesa",
+    ):
+        assert not assess(job(title, description=""), {**PROFILE, "areas": AREAS})[
+            "eligible"
+        ], title
+    assert assess(job("Assistente de Atendimento ao Cliente", description=""), PROFILE)[
+        "eligible"
+    ]

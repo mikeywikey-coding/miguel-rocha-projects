@@ -200,12 +200,13 @@ def assess(job, profile):
     ) and not re.search(r"developer|programador|programmer|desenvolvedor", title):
         tech = False
     # Recruiters and cleaning staff are not IT or customer-support roles ("IT Talent Acquisition", "Support & Cleaning"), nor are
-    # nurses ("Enfermeiro/a - Atendimento Permanente") or trades. Talent-community sign-ups are not openings, and inclusive-recruitment
+    # nurses ("Enfermeiro/a - Atendimento Permanente"), café and shop counter staff ("Empregado de Balcão / Atendimento Cliente") or trades. Talent-community sign-ups are not openings, and inclusive-recruitment
     # roles are reserved for candidates with a disability.
     other = bool(
         re.search(
             r"\b(?:recruiters?|recruitment consultant|talent acquisition|talent sourcer|sourcer|headhunter|recrutador\w*|human resources|recursos humanos|cleaning|cleaner|limpeza|housekeeping|"
             r"enfermeir\w*|nurses?|medic[oa]s?|doctor|farmaceutic\w*|fisioterapeut\w*|dentist\w*|cozinheir\w*|chef|vigilante|eletricista|electricista|canalizador\w*|serralheir\w*|soldador\w*|pedreir\w*|carpinteir\w*|"
+            r"empregad[oa]s? de (?:balcao|mesa|bar|restauracao|copa|loja)|balconista|barista|ajudante de cozinha|operador\w* de caixa|cashier|waiter|waitress|"
             r"talent (?:community|pool|network)|bolsa de (?:talentos|candidatos|recrutamento)|recrutamento inclusivo|inclusive (?:recruitment|hiring)|pessoas com deficiencia|with disabilit\w*)\b",
             title,
         )
