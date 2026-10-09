@@ -24,7 +24,7 @@ _Actual application UI with fictional sample jobs. No mailbox data or personal a
 
 - **Engineering focus:** source adapters, duplicate detection, persistent workflow state and encrypted credential storage.
 - **Review controls:** edits invalidate approvals; the companion leaves the employer tab open for manual review and submission.
-- **Evidence:** 59 Python tests and 15 companion tests run in CI on every push. This copy does not submit applications.
+- **Evidence:** 92 Python tests and 15 companion tests run in CI on every push. This copy does not submit applications.
 
 [Explore Job Compass →](projects/job-compass/)
 
@@ -109,7 +109,7 @@ The Python projects' READMEs cover their own tests.
 
 Game projects are independent fan projects, not official products. Build Lab includes externally sourced rule data and game-related artwork; see [sources and attribution](ATTRIBUTION.md) and its documented accuracy limitations. M4 downloads are hosted on Nexus Mods, not copied into this repository.
 
-No blanket open-source licence is asserted for third-party assets. This repository is initially private. Its GitHub URL becomes suitable for a CV once public access is enabled or a reviewer has been invited.
+No blanket open-source licence is asserted for third-party assets. This repository is public.
 
 ## Validation and maintenance
 
